@@ -1,0 +1,91 @@
+{
+  "AppSubmit": "Submit",
+  "AppButtonAdd": "Add",
+  "AppButtonEdit": "Edit",
+  "AppButtonEnter": "Enter",
+  "AppButtonClose": "Close",
+  "AppModalWarningTitle": "Warning",
+
+  "AppSelectorI": "- All -",
+  "AppNil": "Null",
+
+  "AddMsgX": " success",
+  "AppMsgI": " not empty",
+  "AppMsgII": " unknown error",
+  "AddMsgIII": " binding params error",
+  "AddMsgIV": " add error",
+  "AppMsgV": " edit error",
+
+  "TableJointime": "Jointime",
+  "TableUpdateTime": "UpdateTime",
+  "TableDelete": "Delete",
+  "TableOperation": "Operation",
+
+  "RHSystems": "Systems",
+
+  "RHIndex": "Index",
+  "RHIndexLogin_FAILURE": "Login Failure",
+  "RHIndexLogin_FAILURE_EMAIL": "E-Mail Failure",
+  "RHIndexLogin_FAILURE_PWD": "Password Failure",
+  "RHIndexLogin_Email_PWD_FAILURE": "E-Mail or Password Failure",
+
+  "RHLog": "Log",
+  "RHLogs": "Logs",
+
+  "RHLogTableID": "ID",
+  "RHLogTableUser": "UserName",
+  "RHLogTableUrl": "URL",
+
+  "RHUser": "User",
+  "RHUsers": "Users",
+  "RHUserAdd": "Add User",
+  "RHUserAddPost": "Add User Interface",
+  "RHUserEdit": "Edit User",
+
+  "RHUserTableID": "ID",
+  "RHUserTableRoleName": "Role Name",
+  "RHUserTablePassword": "Password",
+  "RHUserTablePasswordConfirm": "Confirm Password",
+  "RHUserTableEmail": "Email",
+  "RHUserTableNickName": "NickName",
+
+  "RHUserMsgI": "Password and Password Confirm is not same",
+
+  "RHRole": "Role",
+  "RHRoles": "Roles",
+  "RHRoleAdd": "Add Role",
+  "RHRoleAddPost": "Add Role Interface",
+  "RHRoleEdit": "Edit Role",
+
+  "RHRoleTableID": "ID",
+  "RHRoleTableName": "Role Name",
+  "RHRoleTableMenu": "Role & Menu",
+  "RHRoleTableAuthority": "Role & Authority",
+
+  "RHAuthority": "Authority",
+  "RHAuthorities": "Authorities",
+  "RHAuthorityAdd": "Add Authority",
+  "RHAuthorityAddPost": "Add Authority Interface",
+  "RHAuthorityEdit": "Edit Authority",
+
+  "RHAuthority_FAILURE": "No Authority",
+
+  "RHAuthorityTableID": "ID",
+  "RHAuthorityTableRhSign": "RhSign",
+  "RHAuthorityTableRhName": "RhName",
+  "RHAuthorityTableRhUrl": "RhUrl",
+
+  "RHMenu": "Menu",
+  "RHMenus": "Menus",
+  "RHMenuAdd": "Add Menu",
+  "RHMenuAddPost": "Add Menu Interface",
+  "RHMenuEdit": "Edit Menu",
+
+  "RHMenuTableID": "ID",
+  "RHMenuTablePid": "Menu Parent ID",
+  "RHMenuTablePidX": "Top Tree",
+  "RHMenuTableAuthorityId": "Authority ID",
+  "RHMenuTableSign": "Sign",
+  "RHMenuTableName": "Name",
+  "RHMenuTableIcon": "Icon"
+}

@@ -1,0 +1,91 @@
+{
+  "AppSubmit": "提交",
+  "AppButtonAdd": "添加",
+  "AppButtonEdit": "修改",
+  "AppButtonEnter": "确认",
+  "AppButtonClose": "关闭",
+  "AppModalWarningTitle": "警告",
+
+  "AppSelectorI": "- 请选择 -",
+  "AppNil": "无",
+
+  "AddMsgX": "成功",
+  "AppMsgI": "不能为空",
+  "AppMsgII": "未知错误",
+  "AddMsgIII": "参数绑定错误",
+  "AppMsgIV": "添加失败",
+  "AppMsgV": "修改失败",
+
+  "TableJointime": "添加时间",
+  "TableUpdateTime": "修改时间",
+  "TableDelete": "是否启用",
+  "TableOperation": "操作",
+
+  "RHSystems": "系统管理",
+
+  "RHIndex": "首页",
+  "RHIndexLogin_FAILURE": "登入失败",
+  "RHIndexLogin_FAILURE_EMAIL": "邮箱错误",
+  "RHIndexLogin_FAILURE_PWD": "密码错误",
+  "RHIndexLogin_Email_PWD_FAILURE": "邮箱或密码错误",
+
+  "RHLog": "日志管理",
+  "RHLogs": "日志列表",
+
+  "RHLogTableID": "ID",
+  "RHLogTableUser": "用户",
+  "RHLogTableUrl": "日志",
+
+  "RHUser": "用户管理",
+  "RHUsers": "用户列表",
+  "RHUserAdd": "添加用户",
+  "RHUserAddPost": "添加用户接口",
+  "RHUserEdit": "修改用户",
+
+  "RHUserTableID": "ID",
+  "RHUserTableRoleName": "角色",
+  "RHUserTablePassword": "密码",
+  "RHUserTablePasswordConfirm": "确认密码",
+  "RHUserTableEmail": "邮箱",
+  "RHUserTableNickName": "绰号",
+
+  "RHUserMsgI": "确认密码与密码不同",
+
+  "RHRole": "角色管理",
+  "RHRoles": "角色列表",
+  "RHRoleAdd": "添加角色",
+  "RHRoleAddPost": "角色添加接口",
+  "RHRoleEdit": "修改角色",
+
+  "RHRoleTableID": "ID",
+  "RHRoleTableName": "角色名称",
+  "RHRoleTableMenu": "可访问菜单",
+  "RHRoleTableAuthority": "可访问权限",
+
+  "RHAuthority":"权限管理",
+  "RHAuthorities":"权限列表",
+  "RHAuthorityAdd": "添加权限",
+  "RHAuthorityAddPost": "添加权限接口",
+  "RHAuthorityEdit": "修改权限",
+
+  "RHAuthority_FAILURE": "无权限",
+
+  "RHAuthorityTableID": "ID",
+  "RHAuthorityTableRhSign": "签名",
+  "RHAuthorityTableRhName": "权限",
+  "RHAuthorityTableRhUrl": "控制器",
+
+  "RHMenu": "菜单管理",
+  "RHMenus": "菜单列表",
+  "RHMenuAdd": "添加菜单",
+  "RHMenuAddPost": "添加菜单接口",
+  "RHMenuEdit": "修改菜单",
+
+  "RHMenuTableID": "ID",
+  "RHMenuTablePid": "父菜单",
+  "RHMenuTablePidX": "树顶",
+  "RHMenuTableAuthorityId": "关联权限",
+  "RHMenuTableSign": "菜单标签",
+  "RHMenuTableName": "菜单名",
+  "RHMenuTableIcon": "Icon"
+}
