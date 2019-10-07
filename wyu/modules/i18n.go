@@ -8,6 +8,8 @@ import (
 	"strings"
 )
 
+const dirLanguage string = "./resources/lang/"
+
 func I18nT(key string, ln string) string {
 	Tag, _ := Translated.LanguageFormat(ln)
 	return translations[Tag].Sprintf(key)
@@ -33,7 +35,7 @@ func NewI18N() *i18n {
 }
 
 func (translate *i18n) Loading() error {
-	dir := Env.GET("Languages.Dir", "./resources/lang/").(string)
+	dir := Env.GET("Languages.Dir", dirLanguage).(string)
 
 	f, err := ioutil.ReadDir(dir)
 	if err != nil {

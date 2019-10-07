@@ -1,14 +1,14 @@
 package configs
 
 /**
- * Controller Post Struct
+ * Controller Post Construct
 **/
 
 
 // ==================================================================================
 
 /**
- * Models & Basic Struct
+ * Models & Basic Construct
 **/
 type MdbInitialized struct {
 	Query		interface{}

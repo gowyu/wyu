@@ -6,6 +6,7 @@ import (
 )
 
 type Index interface {
+	Index(c *gin.Context)
 	Test(c *gin.Context)
 }
 
@@ -19,6 +20,10 @@ func NewIndexController() *index {
 	return &index{
 		ctrl: NewController(),
 	}
+}
+
+func (c *index) Index(gc *gin.Context) {
+	gc.JSON(http.StatusOK, gin.H{"msg":"test success index"})
 }
 
 func (c *index) Test(gc *gin.Context) {

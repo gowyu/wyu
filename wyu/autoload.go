@@ -1,10 +1,12 @@
-// Copyright 2019- YuWenYu.  All rights reserved.
+// Copyright 2019-~ YuWenYu.  All rights reserved.
 // license that can be found in the LICENSE file.
 
 package wyu
 
 import (
 	"errors"
+	"github.com/gin-contrib/multitemplate"
+	"github.com/gin-gonic/gin"
 	"io"
 	"io/ioutil"
 	"os"
@@ -12,17 +14,13 @@ import (
 	"strings"
 	"time"
 	"wyu/configs"
-
-	"github.com/gin-contrib/multitemplate"
-	"github.com/gin-gonic/gin"
 	"wyu/modules"
 	"wyu/routes"
 )
 
 const (
-	ginPort 		string = "8888"
-	directory 		string = "./resources/templates/"
-	directoryView 	string = directory + "views" + "/"
+	ginPort string = "8888"
+	directory string = "./resources/templates/"
 )
 
 func init() {
@@ -44,8 +42,12 @@ func wYuHttps() {
 
 	var env modules.Vipers = modules.NewVipers().Loading()
 	for _, val := range env.GET("https", []interface{}{}).([]interface{}) {
-		sp := strings.Split(val.(string), ":")
-		configs.WYuRouteHttp[sp[0]] = "/" + sp[1] + configs.HttpSuffix
+		H := strings.Split(val.(string), ":")
+		if H[1] == "" || H[1] == "/" {
+			configs.WYuRouteHttp[H[0]] = "/"
+		} else {
+			configs.WYuRouteHttp[H[0]] = "/" + H[1] + configs.HttpSuffix
+		}
 	}
 }
 
@@ -75,7 +77,7 @@ func (ad *autoload) running() {
 			return
 		}
 
-		strDirViews := modules.Env.GET("Temp.DirViews", directoryView).(string)
+		strDirViews := modules.Env.GET("Temp.DirViews", directory + "view/").(string)
 		arrResources := strings.Split(strResources, ":")
 
 		objTPL := multitemplate.NewRenderer()
@@ -107,7 +109,7 @@ func (ad *autoload) tplLoading(skeleton string, view string) []string {
 		panic(err.Error())
 	}
 
-	TplViews := modules.Env.GET("Temp.DirViews", directoryView).(string)
+	TplViews := modules.Env.GET("Temp.DirViews", directory + "view/").(string)
 	arrTPL := make([]string, 0)
 	arrTPL  = append(TplLayout, TplViews + skeleton + "/" + view)
 
