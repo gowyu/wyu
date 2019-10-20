@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"strings"
 	"wyu/app/http/controllers"
+	"wyu/app/middleware"
 	"wyu/configs"
 	"wyu/modules"
 )
@@ -18,7 +19,7 @@ func NewHttp(r *gin.Engine) *http {
 }
 
 func (h *http) HttpRoutes() {
-	//h.r.Use(middleware.M(), middleware.MSession())
+	h.r.Use(middleware.M())
 
 	for key, val := range h.toHttp() {
 		H := strings.Split(key, ",")

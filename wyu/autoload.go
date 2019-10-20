@@ -42,11 +42,17 @@ func wYuHttps() {
 
 	var env modules.Vipers = modules.NewVipers().Loading()
 	for _, val := range env.GET("https", []interface{}{}).([]interface{}) {
-		H := strings.Split(val.(string), ":")
+		var wYuSuffix string = ""
+		if configs.WYuSuffix != "" {
+			wYuSuffix = "." + configs.WYuSuffix
+		}
+
+		H := strings.Split(val.(string), "->")
+
 		if H[1] == "" || H[1] == "/" {
 			configs.WYuRouteHttp[H[0]] = "/"
 		} else {
-			configs.WYuRouteHttp[H[0]] = "/" + H[1] + configs.HttpSuffix
+			configs.WYuRouteHttp[H[0]] = "/" + H[1] + wYuSuffix
 		}
 	}
 }
@@ -126,8 +132,8 @@ func (ad *autoload) ginTemplateStatic(r *gin.Engine) *gin.Engine {
 		static := modules.Env.GET("Temp.Static", "./resources/assets").(string)
 		staticIcon := modules.Env.GET("Temp.StaticIcon", "./resources/favicon.ico").(string)
 
-		r.Static("/assets", static)
-		r.StaticFile("/favicon.ico", staticIcon)
+		r.Static("./resources/assets", static)
+		r.StaticFile("./resources/favicon.ico", staticIcon)
 	}
 
 	return r

@@ -1,8 +1,8 @@
 package configs
 
 const(
-	HttpSuffix	string =  ".g"
-	WYuKey		string = "WYuControlVersion"
+	WYuSuffix string = "html"
+	WYuKey string = "WYuVersion"
 )
 
 var (

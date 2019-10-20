@@ -11,7 +11,7 @@ type Index interface {
 }
 
 type index struct {
-	ctrl Controller
+	ctrl *controller
 }
 
 var _ Index = &index{}
@@ -23,7 +23,7 @@ func NewIndexController() *index {
 }
 
 func (c *index) Index(gc *gin.Context) {
-	gc.JSON(http.StatusOK, gin.H{"msg":"test success index"})
+	c.ctrl.To(gc, gin.H{"msg":"test success index"})
 }
 
 func (c *index) Test(gc *gin.Context) {

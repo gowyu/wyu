@@ -2,18 +2,12 @@ package services
 
 import "wyu/modules"
 
-type Service interface {
-
+type Service struct {
+	Cache modules.Rd
 }
 
-type service struct {
-	cache modules.Rd
-}
-
-var _ Service = &service{}
-
-func NewService() *service {
-	return &service{
-		cache: modules.InstanceRedis(),
+func NewService() *Service {
+	return &Service{
+		Cache: modules.InstanceRedis(),
 	}
 }
