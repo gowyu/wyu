@@ -143,8 +143,7 @@ func wYuRedis() {
 
 func wYuI18nT() {
 	var i18n I18N = NewI18N()
-	err := i18n.Loading()
-	if err != nil {
+	if err := i18n.Loading(); err != nil {
 		panic(err.Error())
 	}
 

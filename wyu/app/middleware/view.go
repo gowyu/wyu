@@ -1,6 +1,8 @@
 package middleware
 
-import "wyu/configs"
+import (
+	"wyu/configs"
+)
 
 func TviewURL(url string, index string) string {
 	var srcRH string = ""

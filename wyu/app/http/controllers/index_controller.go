@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"github.com/gin-gonic/gin"
-	"net/http"
+	"wyu/app/http/services"
 )
 
 type Index interface {
@@ -12,6 +12,8 @@ type Index interface {
 
 type index struct {
 	ctrl *controller
+	srv services.Services
+	srvIndex services.IndexService
 }
 
 var _ Index = &index{}
@@ -19,13 +21,11 @@ var _ Index = &index{}
 func NewIndexController() *index {
 	return &index{
 		ctrl: NewController(),
+		srv: services.NewIndexService(),
+		srvIndex: services.NewIndexService(),
 	}
 }
 
 func (c *index) Index(gc *gin.Context) {
 	c.ctrl.To(gc, gin.H{"msg":"test success index"})
-}
-
-func (c *index) Test(gc *gin.Context) {
-	gc.JSON(http.StatusOK, gin.H{"msg":"test success"})
 }
