@@ -12,7 +12,7 @@ func M() gin.HandlerFunc {
 }
 
 func Ln(domain string) string {
-	return "zh"
+	return "cn"
 
 	// Todo: Select Languages
 	//sp := strings.Split(domain, ":")

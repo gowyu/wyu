@@ -22,14 +22,14 @@ func (h *http) HttpRoutes() {
 	h.r.Use(middleware.M())
 
 	for key, val := range h.toHttp() {
-		H := strings.Split(key, ",")
+		z := strings.Split(key, ",")
 
-		x, ok := configs.WYuRouteHttp[H[0]];
+		x, ok := configs.WYuRouteHttp[z[0]];
 		if ok == false {
 			continue
 		}
 
-		switch strings.ToLower(H[1]) {
+		switch strings.ToLower(z[1]) {
 		case "get":
 			h.r.GET (x, val ...)
 			continue
@@ -45,8 +45,9 @@ func (h *http) HttpRoutes() {
 }
 
 func (h *http) HttpFuncMap() template.FuncMap {
-	return template.FuncMap{
+	return template.FuncMap {
 		"T": modules.I18nT,
+		"U": middleware.TviewURL,
 	}
 }
 
@@ -54,7 +55,8 @@ func (h *http) toHttp() map[string][]gin.HandlerFunc {
 	var cIndex controllers.Index = controllers.NewIndexController()
 
 	return map[string][]gin.HandlerFunc{
-		"RHIndex,get": []gin.HandlerFunc{cIndex.Index},
-		"RHIndexTest,get": []gin.HandlerFunc{cIndex.Test},
+		"RH___g1,get":[]gin.HandlerFunc{cIndex.Index},
+		"RH___g2,get":[]gin.HandlerFunc{cIndex.Tests},
+		"RH___g3,get":[]gin.HandlerFunc{cIndex.Htmls},
 	}
 }

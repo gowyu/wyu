@@ -10,13 +10,13 @@ type Services interface {
 	Paginator(strPage string, strSize string) map[string]interface{}
 }
 
-var (
-
-)
-
 const(
 	defaultPage int = 1
 	defaultSize int = 10
+)
+
+var (
+
 )
 
 type Service struct {

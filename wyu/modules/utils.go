@@ -103,11 +103,8 @@ func UtilsRandInt(min, max int) int {
 
 func UtilsIsset(key interface{}, arr interface{}, params ...interface{}) (bool, interface{}) {
 	switch reflect.TypeOf(key).Kind() {
-
 	case reflect.Int:
-
 		switch reflect.TypeOf(arr).Kind() {
-
 		case reflect.Map:
 			if reflect.TypeOf(arr).String() == "map[int]int" {
 				data, ok := arr.(map[int]int)[key.(int)]
@@ -121,9 +118,7 @@ func UtilsIsset(key interface{}, arr interface{}, params ...interface{}) (bool, 
 		}
 
 	case reflect.String:
-
 		switch reflect.TypeOf(arr).Kind() {
-
 		case reflect.Map:
 			if reflect.TypeOf(arr).String() == "gin.H" {
 				data, ok := arr.(gin.H)[key.(string)]

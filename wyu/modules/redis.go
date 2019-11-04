@@ -9,8 +9,7 @@ import (
 
 func InstanceRedis() *rd {
 	if len(RdEngines) < 1 {
-		log.Fatal("Engine Redis Error")
-		return nil
+		log.Fatal("Engine Redis Error, Plz Open the Redis Configure in .env.yaml")
 	}
 
 	return RdEngines[UtilsRandInt(0, len(RdEngines))]

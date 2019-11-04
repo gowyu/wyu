@@ -32,17 +32,12 @@ func init() {
 	wYuInitialized()
 }
 
-func wYuInitialized() {
-	ad := new()
-	ad.running()
-}
-
 func wYuHttps() {
 	configs.WYuRouteHttp = map[string]string{}
 
 	var env modules.Vipers = modules.NewVipers().Loading()
 	for _, val := range env.GET("https", []interface{}{}).([]interface{}) {
-		var wYuSuffix string = ""
+		wYuSuffix := ""
 		if configs.WYuSuffix != "" {
 			wYuSuffix = "." + configs.WYuSuffix
 		}
@@ -55,6 +50,11 @@ func wYuHttps() {
 			configs.WYuRouteHttp[H[0]] = "/" + H[1] + wYuSuffix
 		}
 	}
+}
+
+func wYuInitialized() {
+	ad := new()
+	ad.running()
 }
 
 type autoload struct {}
@@ -74,7 +74,7 @@ func (ad *autoload) running() {
 
 	/**
 	 * TODO: Loading Templates
-	 */
+	**/
 	bTpl := modules.Env.GET("Temp.Status", false).(bool)
 	if bTpl {
 		strResources := modules.Env.GET("Temp.Resources", "").(string)
@@ -98,32 +98,6 @@ func (ad *autoload) running() {
 	}
 
 	r.Run(":" + modules.Env.GET("App.Port", ginPort).(string))
-}
-
-func (ad *autoload) tplLoading(skeleton string, view string) []string {
-	TplSuffix := modules.Env.GET("Temp.Suffix", "html").(string)
-
-	dirLayout := modules.Env.GET("Temp.DirLayout", directory + "layouts/").(string)
-	TplLayout, err := filepath.Glob(dirLayout + skeleton + "." + TplSuffix)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	TplShared := modules.Env.GET("Temp.DirShared", directory + "shared/").(string)
-	shareds, err := filepath.Glob(TplShared + skeleton + "/" + "*.html")
-	if err != nil {
-		panic(err.Error())
-	}
-
-	TplViews := modules.Env.GET("Temp.DirViews", directory + "view/").(string)
-	arrTPL := make([]string, 0)
-	arrTPL  = append(TplLayout, TplViews + skeleton + "/" + view)
-
-	for _, shared := range shareds {
-		arrTPL = append(arrTPL, shared)
-	}
-
-	return arrTPL
 }
 
 func (ad *autoload) ginTemplateStatic(r *gin.Engine) *gin.Engine {
@@ -155,4 +129,31 @@ func (ad *autoload) ginInitialized() {
 	} else {
 		gin.ForceConsoleColor()
 	}
+}
+
+func (ad *autoload) tplLoading(skeleton string, view string) []string {
+	TplSuffix := modules.Env.GET("Temp.Suffix", "html").(string)
+	dirLayout := modules.Env.GET("Temp.DirLayout", directory + "layout/").(string)
+
+	TplLayout, err := filepath.Glob(dirLayout + skeleton + "." + TplSuffix)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	TplShared := modules.Env.GET("Temp.DirShared", directory + "shared/").(string)
+	shareds, err := filepath.Glob(TplShared + skeleton + "/" + "*.html")
+	if err != nil {
+		panic(err.Error())
+	}
+
+	TplViews := modules.Env.GET("Temp.DirViews", directory + "view/").(string)
+
+	arrTPL := make([]string, 0)
+	arrTPL = append(TplLayout, TplViews + skeleton + "/" + view)
+
+	for _, shared := range shareds {
+		arrTPL = append(arrTPL, shared)
+	}
+
+	return arrTPL
 }

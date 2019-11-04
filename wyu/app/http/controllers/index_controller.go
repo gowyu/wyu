@@ -7,7 +7,8 @@ import (
 
 type Index interface {
 	Index(c *gin.Context)
-	Test(c *gin.Context)
+	Tests(c *gin.Context)
+	Htmls(c *gin.Context)
 }
 
 type index struct {
@@ -28,4 +29,12 @@ func NewIndexController() *index {
 
 func (c *index) Index(gc *gin.Context) {
 	c.ctrl.To(gc, gin.H{"msg":"test success index"})
+}
+
+func (c *index) Tests(gc *gin.Context) {
+	c.ctrl.To(gc, gin.H{"msg":"test success testing ..."})
+}
+
+func (c *index) Htmls(gc *gin.Context) {
+	c.ctrl.To(gc, gin.H{"msg":"test success html ..."}, "index.html")
 }

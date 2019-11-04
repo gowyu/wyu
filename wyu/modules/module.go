@@ -105,12 +105,12 @@ func wYuSrcdb() {
 			}
 
 			switch method {
-			case "master":
-				MasterDB[table] = dbEngines
-			case "slaver":
-				SlaverDB[table] = dbEngines
-			default:
-				continue
+				case "master":
+					MasterDB[table] = dbEngines
+				case "slaver":
+					SlaverDB[table] = dbEngines
+				default:
+					continue
 			}
 		}
 	}

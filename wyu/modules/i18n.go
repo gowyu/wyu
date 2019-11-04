@@ -8,7 +8,9 @@ import (
 	"strings"
 )
 
-const dirLanguage string = "./resources/lang/"
+const (
+	dirLanguage string = "./resources/lang/"
+)
 
 func I18nT(key string, ln string) string {
 	Tag, _ := Translated.LanguageFormat(ln)
@@ -70,7 +72,6 @@ func (translate *i18n) Loading() error {
 		}
 
 		translations[Tag] = message.NewPrinter(Tag)
-
 	}
 
 	Translated = translate
