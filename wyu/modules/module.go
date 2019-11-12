@@ -146,8 +146,6 @@ func wYuI18nT() {
 	if err := i18n.Loading(); err != nil {
 		panic(err.Error())
 	}
-
-	return
 }
 
 

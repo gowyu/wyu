@@ -1,8 +1,8 @@
 package configs
 
 const(
-	WYuSuffix string = "html"
-	WYuKey string = "wYuVersion"
+	YuSuffix string = "html"
+	YuKey string = "wYuVersion"
 )
 
 var (

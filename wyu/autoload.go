@@ -9,11 +9,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"io"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
-	"wyu/configs"
 	"wyu/modules"
 	"wyu/routes"
 )
@@ -28,28 +28,7 @@ func init() {
 		panic(errors.New("get env configure error in autoload.go"))
 	}
 
-	wYuHttps()
 	wYuInitialized()
-}
-
-func wYuHttps() {
-	configs.WYuRouteHttp = map[string]string{}
-
-	var env modules.Vipers = modules.NewVipers().Loading()
-	for _, val := range env.GET("https", []interface{}{}).([]interface{}) {
-		wYuSuffix := ""
-		if configs.WYuSuffix != "" {
-			wYuSuffix = "." + configs.WYuSuffix
-		}
-
-		H := strings.Split(val.(string), "->")
-
-		if H[1] == "" || H[1] == "/" {
-			configs.WYuRouteHttp[H[0]] = "/"
-		} else {
-			configs.WYuRouteHttp[H[0]] = "/" + H[1] + wYuSuffix
-		}
-	}
 }
 
 func wYuInitialized() {
@@ -69,8 +48,7 @@ func (ad *autoload) running() {
 	r := gin.Default()
 	r = ad.ginTemplateStatic(r)
 
-	rHttp := routes.NewHttp(r)
-	rHttp.HttpRoutes()
+	routes.To(r)
 
 	/**
 	 * TODO: Loading Templates
@@ -79,8 +57,7 @@ func (ad *autoload) running() {
 	if bTpl {
 		strResources := modules.Env.GET("Temp.Resources", "").(string)
 		if strResources == "" {
-			panic("Templates Resources nil, Please check the configure!")
-			return
+			log.Fatal("Templates Resources nil, Please check the configure!")
 		}
 
 		strDirViews := modules.Env.GET("Temp.DirViews", directory + "view/").(string)
@@ -91,7 +68,7 @@ func (ad *autoload) running() {
 			views, _ := ioutil.ReadDir(strDirViews + skeleton)
 			for _, view := range views {
 				arrTPL := ad.tplLoading(skeleton, view.Name())
-				objTPL.AddFromFilesFuncs(view.Name(), rHttp.HttpFuncMap(), arrTPL ...)
+				objTPL.AddFromFilesFuncs(view.Name(), routes.ToFunc(r, "HTTP"), arrTPL ...)
 			}
 		}
 		r.HTMLRender = objTPL
