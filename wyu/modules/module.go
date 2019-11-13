@@ -81,8 +81,8 @@ func wYuSrcdb() {
 		panic("Error Env DBClusters.Databases Configures")
 	}
 
-	MasterDB = make(map[string][]*db, 0)
-	SlaverDB = make(map[string][]*db, 0)
+	masterDB = make(map[string][]*db, 0)
+	slaverDB = make(map[string][]*db, 0)
 
 	for table, dbs := range envDatabases {
 		for method, databases := range dbs.(map[string]interface{}) {
@@ -101,14 +101,15 @@ func wYuSrcdb() {
 				var dbEngine DB = NewDB()
 				dbEngine.DB().DBCluster = cluster
 				dbEngine.DB().DBConfigs = configs
+
 				dbEngines[key] = dbEngine.Instance()
 			}
 
 			switch method {
 				case "master":
-					MasterDB[table] = dbEngines
+					masterDB[table] = dbEngines
 				case "slaver":
-					SlaverDB[table] = dbEngines
+					slaverDB[table] = dbEngines
 				default:
 					continue
 			}

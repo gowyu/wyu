@@ -34,8 +34,8 @@ func init() {
 		panic("Fatal Routes")
 	}
 
-	var HttpToIndex cHttp.Index = cHttp.NewIndexController()
-	var ApisToTests cApis.Api = cApis.NewApi()
+	HttpToIndex := cHttp.NewIndexController()
+	ApisToTests := cApis.NewApi()
 
 	YuRoutes = map[string]map[string][]gin.HandlerFunc{
 		"HTTP": map[string][]gin.HandlerFunc{
@@ -85,20 +85,20 @@ func ToHandle(r *gin.Engine, toFunc map[string][]gin.HandlerFunc) {
 		Y := strings.Split(route, SP)
 
 		switch strings.ToLower(Y[1]) {
-		case "get":
-			r.GET (Y[0], ctrl ...)
-			continue
+			case "get":
+				r.GET (Y[0], ctrl ...)
+				continue
 
-		case "any":
-			r.Any (Y[0], ctrl ...)
-			continue
+			case "any":
+				r.Any (Y[0], ctrl ...)
+				continue
 
-		case "post":
-			r.POST(Y[0], ctrl ...)
-			continue
+			case "post":
+				r.POST(Y[0], ctrl ...)
+				continue
 
-		default:
-			continue
+			default:
+				continue
 		}
 	}
 }

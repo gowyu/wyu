@@ -5,22 +5,16 @@ import (
 	"net/http"
 )
 
-type Api interface {
-	Tests(c *gin.Context)
-}
-
-type api struct {
+type Api struct {
 	ctrl *controller
 }
 
-var _ Api = &api{}
-
-func NewApi() *api {
-	return &api{
+func NewApi() *Api {
+	return &Api{
 		ctrl: NewController(),
 	}
 }
 
-func (c *api) Tests(gc *gin.Context) {
+func (c *Api) Tests(gc *gin.Context) {
 	gc.JSON(http.StatusOK, gin.H{"msg":"Json Testing ..."})
 }

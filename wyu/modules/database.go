@@ -5,25 +5,20 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-xorm/xorm"
 	"log"
+	"strings"
 	"sync"
 	"time"
 )
 
 func InstanceClusterDB(db string, selector ...int) *db {
+	if len(masterDB[strings.ToLower(db)]) < 1 || len(slaverDB[strings.ToLower(db)]) < 1 {
+		log.Fatal("MasterDB or SlaverDB Error")
+	}
+
 	if len(selector) > 0 {
-		if len(MasterDB[db]) < 1 {
-			log.Fatal("MasterDB Error")
-			return nil
-		}
-
-		return MasterDB[db][UtilsRandInt(0, len(MasterDB[db]))]
+		return masterDB[strings.ToLower(db)][UtilsRandInt(0, len(masterDB[strings.ToLower(db)]))]
 	} else {
-		if len(SlaverDB[db]) < 1 {
-			log.Fatal("SlaverDB Error")
-			return nil
-		}
-
-		return SlaverDB[db][UtilsRandInt(0, len(SlaverDB[db]))]
+		return slaverDB[strings.ToLower(db)][UtilsRandInt(0, len(slaverDB[strings.ToLower(db)]))]
 	}
 }
 
@@ -31,8 +26,8 @@ var (
 	_ DB = &db{}
 	SysTimeLocation, _ = time.LoadLocation("Asia/Shanghai")
 
-	MasterDB map[string][]*db
-	SlaverDB map[string][]*db
+	masterDB map[string][]*db
+	slaverDB map[string][]*db
 )
 
 type dbCluster struct {
@@ -91,7 +86,6 @@ func (odbc *db) Instance() *db {
 
 	if odbc.DBConfigs == nil || odbc.DBCluster == nil {
 		log.Println("Error DB Data Source Cluster or Configs")
-		return nil
 	}
 
 	driverFormat := "%s:%s@tcp(%s:%d)/%s?charset=utf8"
@@ -107,7 +101,6 @@ func (odbc *db) Instance() *db {
 	engine, err := xorm.NewEngine(odbc.DBConfigs.DriverName, driverSource)
 	if err != nil {
 		log.Fatalf("db.DbInstanceMaster, %s", err.Error())
-		return nil
 	}
 
 	engine.SetMaxOpenConns(odbc.DBConfigs.MaxOpen)

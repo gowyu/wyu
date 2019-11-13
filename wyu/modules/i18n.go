@@ -28,6 +28,7 @@ type i18n struct {
 
 var (
 	_ I18N = &i18n{}
+
 	Translated I18N
 	translations map[language.Tag]*message.Printer
 )
