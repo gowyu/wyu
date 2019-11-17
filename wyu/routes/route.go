@@ -26,11 +26,10 @@ var (
 		new(http),
 		new(apis),
 	}
-
 )
 
 func init() {
-	if len(Yu) < 1 {
+	if len(Yu) == 0 {
 		panic("Fatal Routes")
 	}
 
@@ -42,6 +41,7 @@ func init() {
 			"/"		+SP+ "get": []gin.HandlerFunc{HttpToIndex.Index},
 			"/test"	+SP+ "get": []gin.HandlerFunc{HttpToIndex.Tests},
 			"/go"	+SP+ "get": []gin.HandlerFunc{HttpToIndex.Htmls},
+			"/rd"	+SP+ "get": []gin.HandlerFunc{HttpToIndex.Cache},
 		},
 		"APIS": map[string][]gin.HandlerFunc{
 			"/api/test"	+SP+ "get": []gin.HandlerFunc{ApisToTests.Tests},
@@ -51,29 +51,27 @@ func init() {
 
 func To(r *gin.Engine) {
 	for _, to := range Yu {
-		toTag, ok := YuRoutes[to.Tag()]
-		if ok == false || len(toTag) < 1 {
+		if _, ok := YuRoutes[to.Tag()]; ok == false || len(YuRoutes[to.Tag()]) == 0 {
 			continue
 		}
 
-		to.Put(r, toTag)
+		to.Put(r, YuRoutes[to.Tag()])
 	}
 }
 
-func ToFunc(r *gin.Engine, tpl ...interface{}) template.FuncMap {
+func ToFunc(tpl ...interface{}) template.FuncMap {
 	var tplFunc template.FuncMap = template.FuncMap{}
 	for _, to := range Yu {
 		if ok, _ := modules.UtilsStrContains(to.Tag(), tpl ...); ok == false {
 			continue
 		}
 
-		toFunc := to.ToFunc()
-		if toFunc == nil {
+		if to.ToFunc() == nil {
 			continue
 		}
 
-		for key, val := range toFunc {
-			tplFunc[key] = val
+		for Tag, toFunc := range to.ToFunc() {
+			tplFunc[Tag] = toFunc
 		}
 	}
 

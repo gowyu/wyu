@@ -8,7 +8,7 @@ import (
 )
 
 func InstanceRedis() *rd {
-	if len(RdEngines) < 1 {
+	if len(RdEngines) == 0 {
 		log.Fatal("Engine Redis Error, Plz Open the Redis Configure in .env.yaml")
 	}
 
@@ -22,29 +22,16 @@ type rdSource struct {
 	PoolSize int
 }
 
-type Rd interface {
-	Rd() *rd
-	Engine() *redis.Client
-	Instance() *rd
-}
-
 type rd struct {
 	r *redis.Client
+	rdSource *rdSource
 	mx sync.Mutex
-	RdSource *rdSource
 }
 
-var (
-	_ Rd = &rd{}
-	RdEngines []*rd
-)
+var RdEngines []*rd
 
 func NewRedis() *rd {
 	return &rd{}
-}
-
-func (cache *rd) Rd() *rd {
-	return cache
 }
 
 func (cache *rd) Engine() *redis.Client {
@@ -56,7 +43,7 @@ func (cache *rd) Engine() *redis.Client {
 	return cache.r
 }
 
-func (cache *rd) Instance() *rd {
+func (cache *rd) instance() *rd {
 	cache.mx.Lock()
 	defer cache.mx.Unlock()
 
@@ -65,19 +52,21 @@ func (cache *rd) Instance() *rd {
 	}
 
 	client := redis.NewClient(&redis.Options{
-		Addr:     cache.RdSource.Addr,
-		Password: cache.RdSource.Password,
-		DB:       cache.RdSource.DB,
-		PoolSize: cache.RdSource.PoolSize,
+		Addr:     cache.rdSource.Addr,
+		Password: cache.rdSource.Password,
+		DB:       cache.rdSource.DB,
+		PoolSize: cache.rdSource.PoolSize,
 	})
 
 	_, err := client.Ping().Result()
 	if err != nil {
+		if client != nil {
+			client.Close()
+		}
+
 		panic(fmt.Sprintf("ping error[%s]\n", err.Error()))
 	}
 
 	cache.r = client
 	return cache
 }
-
-

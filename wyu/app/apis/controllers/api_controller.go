@@ -6,12 +6,12 @@ import (
 )
 
 type Api struct {
-	ctrl *controller
+	ctr *controller
 }
 
 func NewApi() *Api {
 	return &Api{
-		ctrl: NewController(),
+		ctr: NewController(),
 	}
 }
 

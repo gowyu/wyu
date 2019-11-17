@@ -11,8 +11,14 @@ import (
 )
 
 func InstanceClusterDB(db string, selector ...int) *db {
-	if len(masterDB[strings.ToLower(db)]) < 1 || len(slaverDB[strings.ToLower(db)]) < 1 {
-		log.Fatal("MasterDB or SlaverDB Error")
+	if len(masterDB[strings.ToLower(db)]) == 0 {
+		log.Println("MasterDB Error")
+		return nil
+	}
+
+	if len(slaverDB[strings.ToLower(db)]) == 0 {
+		log.Println("SlaverDB Error")
+		return nil
 	}
 
 	if len(selector) > 0 {
@@ -23,7 +29,6 @@ func InstanceClusterDB(db string, selector ...int) *db {
 }
 
 var (
-	_ DB = &db{}
 	SysTimeLocation, _ = time.LoadLocation("Asia/Shanghai")
 
 	masterDB map[string][]*db
@@ -46,25 +51,15 @@ type dbConfigs struct {
 	CachedSQL 	bool
 }
 
-type DB interface {
-	DB() *db
-	Instance() *db
-	Engine() *xorm.Engine
-}
-
 type db struct {
 	engine *xorm.Engine
 	mx sync.Mutex
-	DBCluster *dbCluster
-	DBConfigs *dbConfigs
+	dbCluster *dbCluster
+	dbConfigs *dbConfigs
 }
 
 func NewDB() *db {
 	return &db{}
-}
-
-func (odbc *db) DB() *db {
-	return odbc
 }
 
 func (odbc *db) Engine() *xorm.Engine {
@@ -76,7 +71,7 @@ func (odbc *db) Engine() *xorm.Engine {
 	return odbc.engine
 }
 
-func (odbc *db) Instance() *db {
+func (odbc *db) instance() *db {
 	odbc.mx.Lock()
 	defer odbc.mx.Unlock()
 
@@ -84,32 +79,36 @@ func (odbc *db) Instance() *db {
 		return odbc
 	}
 
-	if odbc.DBConfigs == nil || odbc.DBCluster == nil {
-		log.Println("Error DB Data Source Cluster or Configs")
+	if odbc.dbConfigs == nil || odbc.dbCluster == nil {
+		log.Fatal("Error DB Data Source Cluster or Configs")
 	}
 
 	driverFormat := "%s:%s@tcp(%s:%d)/%s?charset=utf8"
 	driverSource := fmt.Sprintf(
 		driverFormat,
-		odbc.DBCluster.Username,
-		odbc.DBCluster.Password,
-		odbc.DBCluster.Host,
-		odbc.DBCluster.Port,
-		odbc.DBCluster.Table,
+		odbc.dbCluster.Username,
+		odbc.dbCluster.Password,
+		odbc.dbCluster.Host,
+		odbc.dbCluster.Port,
+		odbc.dbCluster.Table,
 	)
 
-	engine, err := xorm.NewEngine(odbc.DBConfigs.DriverName, driverSource)
+	engine, err := xorm.NewEngine(odbc.dbConfigs.DriverName, driverSource)
 	if err != nil {
+		if engine != nil {
+			engine.Close()
+		}
+
 		log.Fatalf("db.DbInstanceMaster, %s", err.Error())
 	}
 
-	engine.SetMaxOpenConns(odbc.DBConfigs.MaxOpen)
-	engine.SetMaxIdleConns(odbc.DBConfigs.MaxIdle)
+	engine.SetMaxOpenConns(odbc.dbConfigs.MaxOpen)
+	engine.SetMaxIdleConns(odbc.dbConfigs.MaxIdle)
 
-	engine.ShowSQL(odbc.DBConfigs.ShowedSQL)
+	engine.ShowSQL(odbc.dbConfigs.ShowedSQL)
 	engine.SetTZDatabase(SysTimeLocation)
 
-	if odbc.DBConfigs.CachedSQL {
+	if odbc.dbConfigs.CachedSQL {
 		cached := xorm.NewLRUCacher(xorm.NewMemoryStore(), 1000)
 		engine.SetDefaultCacher(cached)
 	}

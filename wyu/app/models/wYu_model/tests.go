@@ -30,15 +30,3 @@ func (m *TestsModel) FetchAllByCondition(dbInitialized configs.MdbInitialized) [
 	}
 }
 
-
-
-
-
-
-
-
-
-
-
-
-

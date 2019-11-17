@@ -8,18 +8,11 @@ import (
 	"strings"
 )
 
-const (
-	dirLanguage string = "./resources/lang/"
-)
+const dirLanguage string = "./resources/lang/"
 
 func I18nT(key string, ln string) string {
 	Tag, _ := Translated.LanguageFormat(ln)
 	return translations[Tag].Sprintf(key)
-}
-
-type I18N interface {
-	Loading() error
-	LanguageFormat(ln string) (language.Tag, error)
 }
 
 type i18n struct {
@@ -27,9 +20,7 @@ type i18n struct {
 }
 
 var (
-	_ I18N = &i18n{}
-
-	Translated I18N
+	Translated *i18n
 	translations map[language.Tag]*message.Printer
 )
 

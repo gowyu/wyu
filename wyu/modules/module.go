@@ -42,6 +42,7 @@ func wYuEnv() {
 	pflag.Parse()
 
 	var env Vipers = NewVipers()
+
 	err := env.Vipers().Env.BindPFlags(pflag.CommandLine)
 	if err != nil {
 		panic(err.Error())
@@ -68,8 +69,8 @@ func wYuSrcdb() {
 		if errConfigs != nil {
 			configs = &dbConfigs{
 				DriverName: "mysql",
-				MaxOpen: 2000,
-				MaxIdle: 1000,
+				MaxOpen: 1000,
+				MaxIdle: 500,
 				ShowedSQL: false,
 				CachedSQL: false,
 			}
@@ -98,11 +99,11 @@ func wYuSrcdb() {
 					panic(err.Error())
 				}
 
-				var dbEngine DB = NewDB()
-				dbEngine.DB().DBCluster = cluster
-				dbEngine.DB().DBConfigs = configs
+				dbEngine := NewDB()
+				dbEngine.dbCluster = cluster
+				dbEngine.dbConfigs = configs
 
-				dbEngines[key] = dbEngine.Instance()
+				dbEngines[key] = dbEngine.instance()
 			}
 
 			switch method {
@@ -136,15 +137,15 @@ func wYuRedis() {
 			continue
 		}
 
-		var cache Rd = NewRedis()
-		cache.Rd().RdSource = src
-		RdEngines = append(RdEngines, cache.Instance())
+		cache := NewRedis()
+		cache.rdSource = src
+
+		RdEngines = append(RdEngines, cache.instance())
 	}
 }
 
 func wYuI18nT() {
-	var i18n I18N = NewI18N()
-	if err := i18n.Loading(); err != nil {
+	if err := NewI18N().Loading(); err != nil {
 		panic(err.Error())
 	}
 }

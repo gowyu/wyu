@@ -1,6 +1,7 @@
 package services
 
 import (
+	"github.com/go-redis/redis"
 	"math"
 	"strconv"
 	"wyu/modules"
@@ -15,17 +16,13 @@ const(
 	defaultSize int = 10
 )
 
-var (
-
-)
-
 type Service struct {
-	Cache modules.Rd
+	Cache *redis.Client
 }
 
 func NewService() *Service {
 	return &Service{
-		Cache: modules.InstanceRedis(),
+		Cache: modules.InstanceRedis().Engine(),
 	}
 }
 

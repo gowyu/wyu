@@ -68,7 +68,7 @@ func (ad *autoload) running() {
 			views, _ := ioutil.ReadDir(strDirViews + skeleton)
 			for _, view := range views {
 				arrTPL := ad.tplLoading(skeleton, view.Name())
-				objTPL.AddFromFilesFuncs(view.Name(), routes.ToFunc(r, "HTTP"), arrTPL ...)
+				objTPL.AddFromFilesFuncs(view.Name(), routes.ToFunc("HTTP"), arrTPL ...)
 			}
 		}
 		r.HTMLRender = objTPL
@@ -78,8 +78,7 @@ func (ad *autoload) running() {
 }
 
 func (ad *autoload) ginTemplateStatic(r *gin.Engine) *gin.Engine {
-	bTplStatic := modules.Env.GET("Temp.StaticStatus", false).(bool)
-	if bTplStatic {
+	if modules.Env.GET("Temp.StaticStatus", false).(bool) {
 		static := modules.Env.GET("Temp.Static", "./resources/assets").(string)
 		staticIcon := modules.Env.GET("Temp.StaticIcon", "./resources/favicon.ico").(string)
 
@@ -93,6 +92,7 @@ func (ad *autoload) ginTemplateStatic(r *gin.Engine) *gin.Engine {
 func (ad *autoload) ginInitialized() {
 	if modules.Env.GET("Logs.Status", false).(bool) {
 		dir := modules.Env.GET("Logs.Root", "./storage/logs").(string)
+
 		_, err := os.Stat(dir)
 		if err != nil {
 			panic(err.Error())
@@ -102,6 +102,7 @@ func (ad *autoload) ginInitialized() {
 		prefix := modules.Env.GET("Logs.Prefix", "wYu").(string)
 		fn := dir + "/" + prefix + "_" + time.Now().String() + ".log"
 		f, _ := os.Create(fn)
+
 		gin.DefaultWriter = io.MultiWriter(f)
 	} else {
 		gin.ForceConsoleColor()
@@ -118,6 +119,7 @@ func (ad *autoload) tplLoading(skeleton string, view string) []string {
 	}
 
 	TplShared := modules.Env.GET("Temp.DirShared", directory + "shared/").(string)
+
 	shareds, err := filepath.Glob(TplShared + skeleton + "/" + "*.html")
 	if err != nil {
 		panic(err.Error())
