@@ -3,17 +3,17 @@ package controllers
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"wyu/app/http/services"
+	services2 "wyu/app/server/http/services"
 	"wyu/modules"
 )
 
 type controller struct {
-	srv *services.Service
+	srv *services2.Service
 }
 
 func NewController() *controller {
 	return &controller{
-		srv: services.NewService(),
+		srv: services2.NewService(),
 	}
 }
 

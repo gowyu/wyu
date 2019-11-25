@@ -4,7 +4,6 @@
 package wyu
 
 import (
-	"errors"
 	"github.com/gin-contrib/multitemplate"
 	"github.com/gin-gonic/gin"
 	"io"
@@ -16,6 +15,8 @@ import (
 	"time"
 	"wyu/modules"
 	"wyu/routes"
+
+	_ "wyu/app/console/subscribe"
 )
 
 const (
@@ -25,21 +26,15 @@ const (
 
 func init() {
 	if modules.Env == nil {
-		panic(errors.New("get env configure error in autoload.go"))
+		panic("get env configure error in autoload.go")
 	}
 
-	wYuInitialized()
-}
-
-func wYuInitialized() {
-	ad := new()
+	ad := new(autoload)
 	ad.running()
 }
 
-type autoload struct {}
+type autoload struct {
 
-func new() *autoload {
-	return &autoload {}
 }
 
 func (ad *autoload) running() {

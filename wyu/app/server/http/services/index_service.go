@@ -15,13 +15,13 @@ type indexService struct {
 }
 
 var (
-	_ Services = &indexService{}
+	_ Services     = &indexService{}
 	_ IndexService = &indexService{}
 )
 
 func NewIndexService() *indexService {
 	return &indexService{
-		srv: NewService(),
+		srv:   NewService(),
 		mTest: wYu.NewTestsModel(),
 	}
 }

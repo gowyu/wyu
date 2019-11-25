@@ -49,7 +49,6 @@ func wYuEnv() {
 	}
 
 	Env = env.LoadInitializedFromYaml()
-
 	if Env == nil {
 		panic("Error Env In wYuEnv")
 	}
@@ -58,22 +57,21 @@ func wYuEnv() {
 }
 
 func wYuSrcdb() {
-	if Env == nil {
-		panic("Error Env In wYuSrc")
-	}
-
 	var configs *dbConfigs
+
 	envConfigure := Env.GET("DBClusters.Configure", map[string]interface{}{}).(map[string]interface{})
-	if len(envConfigure) > 0 {
-		errConfigs := UtilsMapToStruct(envConfigure, &configs)
-		if errConfigs != nil {
-			configs = &dbConfigs{
-				DriverName: "mysql",
-				MaxOpen: 1000,
-				MaxIdle: 500,
-				ShowedSQL: false,
-				CachedSQL: false,
-			}
+	if len(envConfigure) == 0 {
+		configs = &dbConfigs{
+			DriverName: "mysql",
+			MaxOpen: 1000,
+			MaxIdle: 500,
+			ShowedSQL: false,
+			CachedSQL: false,
+		}
+	} else {
+		err := UtilsMapToStruct(envConfigure, &configs)
+		if err != nil {
+			panic("Error Env DBClusters.Configure Configures")
 		}
 	}
 
@@ -119,10 +117,6 @@ func wYuSrcdb() {
 }
 
 func wYuRedis() {
-	if Env == nil {
-		panic("Error Env In wYuSrc")
-	}
-
 	envRedis := Env.GET("Redis", []interface{}{}).([]interface{})
 	if len(envRedis) < 1 {
 		panic("redis configs error")
@@ -149,5 +143,3 @@ func wYuI18nT() {
 		panic(err.Error())
 	}
 }
-
-

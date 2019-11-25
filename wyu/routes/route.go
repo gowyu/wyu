@@ -4,8 +4,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"html/template"
 	"strings"
-	cApis "wyu/app/apis/controllers"
-	cHttp "wyu/app/http/controllers"
+	cApis "wyu/app/server/apis/controllers"
+	cHttp "wyu/app/server/http/controllers"
+	"wyu/configs"
 	"wyu/modules"
 )
 
@@ -38,20 +39,24 @@ func init() {
 
 	YuRoutes = map[string]map[string][]gin.HandlerFunc{
 		"HTTP": map[string][]gin.HandlerFunc{
-			"/"		+SP+ "get": []gin.HandlerFunc{HttpToIndex.Index},
-			"/test"	+SP+ "get": []gin.HandlerFunc{HttpToIndex.Tests},
-			"/go"	+SP+ "get": []gin.HandlerFunc{HttpToIndex.Htmls},
-			"/rd"	+SP+ "get": []gin.HandlerFunc{HttpToIndex.Cache},
+			"H-IO-IO" +SP+ "get" +SP+ "/": []gin.HandlerFunc{HttpToIndex.Index},
+			"H-IO-II" +SP+ "get" +SP+ "/tests": []gin.HandlerFunc{HttpToIndex.Tests},
+			"H-IO-IE" +SP+ "get" +SP+ "/htmls": []gin.HandlerFunc{HttpToIndex.Htmls},
+			"H-IO-IV" +SP+ "get" +SP+ "/cache": []gin.HandlerFunc{HttpToIndex.Cache},
 		},
 		"APIS": map[string][]gin.HandlerFunc{
-			"/api/test"	+SP+ "get": []gin.HandlerFunc{ApisToTests.Tests},
+			"A-IO-IO" +SP+ "get" +SP+ "/api/test": []gin.HandlerFunc{ApisToTests.Tests},
 		},
 	}
 }
 
 func To(r *gin.Engine) {
 	for _, to := range Yu {
-		if _, ok := YuRoutes[to.Tag()]; ok == false || len(YuRoutes[to.Tag()]) == 0 {
+		if _, ok := YuRoutes[to.Tag()]; ok == false {
+			continue
+		}
+
+		if len(YuRoutes[to.Tag()]) == 0 {
 			continue
 		}
 
@@ -82,21 +87,34 @@ func ToHandle(r *gin.Engine, toFunc map[string][]gin.HandlerFunc) {
 	for route, ctrl := range toFunc {
 		Y := strings.Split(route, SP)
 
+		if len(Y) != 3 {
+			continue
+		}
+
+		_, ok := configs.YuRoutes[Y[0]]
+		if ok == false {
+			configs.YuRoutes[Y[0]] = Y[2]
+		}
+
 		switch strings.ToLower(Y[1]) {
 			case "get":
-				r.GET (Y[0], ctrl ...)
+				r.GET (Y[2], ctrl ...)
 				continue
 
 			case "any":
-				r.Any (Y[0], ctrl ...)
+				r.Any (Y[2], ctrl ...)
 				continue
 
 			case "post":
-				r.POST(Y[0], ctrl ...)
+				r.POST(Y[2], ctrl ...)
 				continue
 
 			default:
 				continue
 		}
 	}
+}
+
+func ToHandleGroup() {
+
 }

@@ -12,7 +12,11 @@ func InstanceRedis() *rd {
 		log.Fatal("Engine Redis Error, Plz Open the Redis Configure in .env.yaml")
 	}
 
-	return RdEngines[UtilsRandInt(0, len(RdEngines))]
+	if len(RdEngines) == 1 {
+		return RdEngines[0]
+	} else {
+		return RdEngines[UtilsRandInt(0, len(RdEngines))]
+	}
 }
 
 type rdSource struct {

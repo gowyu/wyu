@@ -6,6 +6,7 @@ const(
 )
 
 var (
-	WYu map[string]interface{}
-	WYuRouteHttp map[string]string
+	Yu map[string]interface{}
+	YuRoutes map[string]string = map[string]string{}
+	YuSubscribe []string = []string{"test"}
 )

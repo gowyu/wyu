@@ -1,23 +1,26 @@
-package main
+package cron
 
 import (
 	"fmt"
 	"github.com/robfig/cron"
+	"wyu/modules"
 )
 
-func main() {
-	NewCronTab().work()
+func init() {
+	if modules.Env == nil {
+		panic("get env config error in console/cron/cron.go")
+	}
+
+	if modules.Env.GET("YuCronTab", false).(bool) {
+		new(cronTab).do()
+	}
 }
 
 type cronTab struct {
 
 }
 
-func NewCronTab() *cronTab {
-	return &cronTab{}
-}
-
-func (cTab *cronTab) work() {
+func (cTab *cronTab) do() {
 	i := 0
 	c := cron.New()
 

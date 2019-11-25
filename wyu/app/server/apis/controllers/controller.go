@@ -1,15 +1,13 @@
 package controllers
 
 import (
-	"wyu/app/apis/services"
+	services2 "wyu/app/server/apis/services"
 )
 
 type controller struct {
-	srv *services.Service
+	srv *services2.Service
 }
 
 func NewController() *controller {
 	return &controller{}
 }
-
-
