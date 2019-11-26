@@ -1,11 +1,14 @@
 package middleware
 
-import "github.com/gin-gonic/gin"
+import (
+	"fmt"
+	"github.com/gin-gonic/gin"
+)
 
 func M() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		H := c.Request.Host
-
+		fmt.Println("ddd")
 		c.Set("M", gin.H{"H":H, "Ln":Ln(H)})
 		c.Next()
 	}

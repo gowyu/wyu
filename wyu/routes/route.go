@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"html/template"
 	"strings"
+	"wyu/app/exceptions"
 	cApis "wyu/app/server/apis/controllers"
 	cHttp "wyu/app/server/http/controllers"
 	"wyu/configs"
@@ -19,8 +20,8 @@ type Routes interface {
 }
 
 var (
-	_ Routes = &http{}
-	_ Routes = &apis{}
+	_ Routes = new(http)
+	_ Routes = new(apis)
 
 	YuRoutes map[string]map[string][]gin.HandlerFunc
 	Yu []Routes = []Routes{
@@ -45,12 +46,17 @@ func init() {
 			"H-IO-IV" +SP+ "get" +SP+ "/cache": []gin.HandlerFunc{HttpToIndex.Cache},
 		},
 		"APIS": map[string][]gin.HandlerFunc{
-			"A-IO-IO" +SP+ "get" +SP+ "/api/test": []gin.HandlerFunc{ApisToTests.Tests},
+			"A-IO-IO" +SP+ "get" +SP+ "/test": []gin.HandlerFunc{ApisToTests.Tests},
 		},
 	}
 }
 
 func To(r *gin.Engine) {
+	/**
+	 * No Route
+	**/
+	r.NoRoute(exceptions.NewExceptions().NoRoute)
+	
 	for _, to := range Yu {
 		if _, ok := YuRoutes[to.Tag()]; ok == false {
 			continue
@@ -83,7 +89,7 @@ func ToFunc(tpl ...interface{}) template.FuncMap {
 	return tplFunc
 }
 
-func ToHandle(r *gin.Engine, toFunc map[string][]gin.HandlerFunc) {
+func do(g *gin.RouterGroup, toFunc map[string][]gin.HandlerFunc) {
 	for route, ctrl := range toFunc {
 		Y := strings.Split(route, SP)
 
@@ -97,24 +103,20 @@ func ToHandle(r *gin.Engine, toFunc map[string][]gin.HandlerFunc) {
 		}
 
 		switch strings.ToLower(Y[1]) {
-			case "get":
-				r.GET (Y[2], ctrl ...)
-				continue
+		case "get":
+			g.GET (Y[2], ctrl ...)
+			continue
 
-			case "any":
-				r.Any (Y[2], ctrl ...)
-				continue
+		case "any":
+			g.Any (Y[2], ctrl ...)
+			continue
 
-			case "post":
-				r.POST(Y[2], ctrl ...)
-				continue
+		case "post":
+			g.POST(Y[2], ctrl ...)
+			continue
 
-			default:
-				continue
+		default:
+			continue
 		}
 	}
-}
-
-func ToHandleGroup() {
-
 }

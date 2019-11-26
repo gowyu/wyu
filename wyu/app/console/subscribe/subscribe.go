@@ -19,7 +19,9 @@ func init() {
 	}
 
 	if modules.Env.GET("YuRedisSubscribe", false).(bool) {
-		go new(subscribe).do()
+		if configs.YuRoutes != nil && len(configs.YuRoutes) != 0 {
+			go new(subscribe).do()
+		}
 	}
 }
 

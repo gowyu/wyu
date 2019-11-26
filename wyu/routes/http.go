@@ -16,8 +16,7 @@ func (h *http) Tag() string {
 }
 
 func (h *http) Put(r *gin.Engine, toFunc map[string][]gin.HandlerFunc) {
-	r.Use(middleware.M())
-	ToHandle(r, toFunc)
+	do(r.Group("", middleware.M()), toFunc)
 }
 
 func (h *http) ToFunc() template.FuncMap {

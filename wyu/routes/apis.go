@@ -14,7 +14,7 @@ func (h *apis) Tag() string {
 }
 
 func (h *apis) Put(r *gin.Engine, toFunc map[string][]gin.HandlerFunc) {
-	ToHandle(r, toFunc)
+	do(r.Group("apis"), toFunc)
 }
 
 func (h *apis) ToFunc() template.FuncMap {

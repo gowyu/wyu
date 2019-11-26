@@ -1,7 +1,6 @@
 package subscribe
 
 import (
-	"fmt"
 	"wyu/modules"
 )
 
@@ -20,7 +19,6 @@ func (subscribed *rd) Subscribe(channels ...string) {
 	for msg := range subscribe.Channel() {
 		switch msg.Channel {
 		case "test":
-			fmt.Println(msg.Channel, ",", msg.Payload)
 			continue
 		default:
 			continue
