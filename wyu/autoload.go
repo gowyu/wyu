@@ -77,8 +77,8 @@ func (ad *autoload) ginTemplateStatic(r *gin.Engine) *gin.Engine {
 		static := modules.Env.GET("Temp.Static", "./resources/assets").(string)
 		staticIcon := modules.Env.GET("Temp.StaticIcon", "./resources/favicon.ico").(string)
 
-		r.Static("./resources/assets", static)
-		r.StaticFile("./resources/favicon.ico", staticIcon)
+		r.Static("./assets", static)
+		r.StaticFile("./favicon.ico", staticIcon)
 	}
 
 	return r

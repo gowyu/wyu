@@ -64,13 +64,9 @@ func (cache *rd) instance() *rd {
 
 	_, err := client.Ping().Result()
 	if err != nil {
-		if client != nil {
-			client.Close()
-		}
-
 		panic(fmt.Sprintf("ping error[%s]\n", err.Error()))
 	}
-
+	
 	cache.r = client
 	return cache
 }

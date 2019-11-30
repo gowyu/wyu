@@ -3,24 +3,27 @@ package controllers
 import (
 	"github.com/gin-gonic/gin"
 	services2 "wyu/app/server/http/services"
+	"wyu/modules"
 )
 
 type Index struct {
-	ctr      *controller
-	srv      services2.Services
+	wxc *modules.WeChat
+	ctr *controller
+	srv services2.Services
 	srvIndex services2.IndexService
 }
 
 func NewIndexController() *Index {
 	return &Index{
-		ctr:      NewController(),
-		srv:      services2.NewIndexService(),
+		wxc: modules.NewWeChat(),
+		ctr: NewController(),
+		srv: services2.NewIndexService(),
 		srvIndex: services2.NewIndexService(),
 	}
 }
 
 func (c *Index) Index(gc *gin.Context) {
-	c.ctr.To(gc, gin.H{"msg": "test success index"})
+	c.ctr.To(gc, gin.H{"txt": "Test WeiXin Login"}, "index.html")
 }
 
 func (c *Index) Tests(gc *gin.Context) {
@@ -32,6 +35,7 @@ func (c *Index) Tests(gc *gin.Context) {
 			"msg": "test success testing ...",
 			"txt": c.srvIndex.Test(nil, nil, nil),
 			"rds": c.ctr.srv.Cache.Get("test").Val(),
+			"exe": c.ctr.srv.Cache.Exists("test").Val(),
 		},
 	)
 }
