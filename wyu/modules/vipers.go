@@ -10,30 +10,16 @@ const (
 	EnvType string = "yaml"
 )
 
-type Vipers interface {
-	Vipers() *vipers
-	GET(key string, val interface{}) interface{}
-	Loading() *vipers
-	LoadInitializedFromYaml() *vipers
-}
-
 type vipers struct {
 	Env *viper.Viper
 }
 
-var (
-	_ Vipers = &vipers{}
-	Env Vipers
-)
+var Env *vipers
 
 func NewVipers() *vipers {
 	return &vipers{
 		Env:viper.New(),
 	}
-}
-
-func (conf *vipers) Vipers() *vipers {
-	return conf
 }
 
 func (conf *vipers) Loading() *vipers {
@@ -46,7 +32,9 @@ func (conf *vipers) Loading() *vipers {
 	}
 
 	conf.Env.WatchConfig()
-	conf.Env.OnConfigChange(func (e fsnotify.Event){})
+	conf.Env.OnConfigChange(func (e fsnotify.Event){
+
+	})
 
 	return conf
 }
@@ -76,13 +64,13 @@ func (conf *vipers) LoadInitializedFromYaml() *vipers {
 	return conf
 }
 
-func (conf *vipers) GET(key string, val interface{}) interface{} {
-	var env interface{} = val
+func (conf *vipers) GET(key string, val interface{}) (res interface{}) {
+	res = val
 	if conf.Env.IsSet(key) {
-		env = conf.Env.Get(key)
+		res = conf.Env.Get(key)
 	}
 
-	return env
+	return
 }
 
 

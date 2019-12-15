@@ -15,7 +15,7 @@ func New(engine *xorm.Engine) *Models {
 	}
 }
 
-func (m *Models) FetchAllByCondition(dbInitialized configs.MdbInitialized, data interface{}) error {
+func (m *Models) FetchAllByCondition(dbInitialized configs.MdbInitialized, data interface{}) (err error) {
 	var xSession *xorm.Session
 
 	if dbInitialized.Columns != nil {
@@ -30,17 +30,11 @@ func (m *Models) FetchAllByCondition(dbInitialized configs.MdbInitialized, data 
 		}
 	}
 
-	var err error
-
 	if xSession != nil {
 		err = xSession.Find(data)
 	} else {
 		err = m.engine.Find(data)
 	}
 
-	if err != nil {
-		return err
-	} else {
-		return nil
-	}
+	return
 }

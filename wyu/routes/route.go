@@ -40,20 +40,20 @@ func init() {
 
 	YuRoutes = map[string]map[string][]gin.HandlerFunc{
 		"HTTP": map[string][]gin.HandlerFunc{
-			"H-IO-IO" +SP+ "get" +SP+ "/": []gin.HandlerFunc{HttpToIndex.Index},
-			"H-IO-II" +SP+ "get" +SP+ "/tests": []gin.HandlerFunc{HttpToIndex.Tests},
-			"H-IO-IE" +SP+ "get" +SP+ "/htmls": []gin.HandlerFunc{HttpToIndex.Htmls},
-			"H-IO-IV" +SP+ "get" +SP+ "/cache": []gin.HandlerFunc{HttpToIndex.Cache},
+			"HIndex" +SP+ "get" +SP+ "/": []gin.HandlerFunc{HttpToIndex.Index},
+			"HIndexTests" +SP+ "get" +SP+ "/tests": []gin.HandlerFunc{HttpToIndex.Tests},
+			"HIndexHtmls" +SP+ "get" +SP+ "/htmls": []gin.HandlerFunc{HttpToIndex.Htmls},
+			"HIndexCache" +SP+ "get" +SP+ "/cache": []gin.HandlerFunc{HttpToIndex.Cache},
 		},
 		"APIS": map[string][]gin.HandlerFunc{
-			"A-IO-IO" +SP+ "get" +SP+ "/test": []gin.HandlerFunc{ApisToTests.Tests},
+			"ATest" +SP+ "get" +SP+ "/test": []gin.HandlerFunc{ApisToTests.Tests},
 		},
 	}
 }
 
 func To(r *gin.Engine) {
 	/**
-	 * No Route
+	 * No Route To Redirect
 	**/
 	r.NoRoute(exceptions.NewExceptions().NoRoute)
 	
@@ -72,6 +72,7 @@ func To(r *gin.Engine) {
 
 func ToFunc(tpl ...interface{}) template.FuncMap {
 	var tplFunc template.FuncMap = template.FuncMap{}
+
 	for _, to := range Yu {
 		if ok, _ := modules.UtilsStrContains(to.Tag(), tpl ...); ok == false {
 			continue

@@ -11,13 +11,11 @@ import (
 const dirLanguage string = "./resources/lang/"
 
 func I18nT(key string, ln string) string {
-	Tag, _ := Translated.LanguageFormat(ln)
-	return translations[Tag].Sprintf(key)
+	tag, _ := Translated.LanguageFormat(ln)
+	return translations[tag].Sprintf(key)
 }
 
-type i18n struct {
-
-}
+type i18n struct {}
 
 var (
 	Translated *i18n
@@ -28,12 +26,12 @@ func NewI18N() *i18n {
 	return &i18n{}
 }
 
-func (translate *i18n) Loading() error {
+func (translate *i18n) Loading() (err error) {
 	dir := Env.GET("Languages.Dir", dirLanguage).(string)
 
 	f, err := ioutil.ReadDir(dir)
 	if err != nil {
-		return err
+		return
 	}
 
 	translations = make(map[language.Tag]*message.Printer, 0)
@@ -49,36 +47,40 @@ func (translate *i18n) Loading() error {
 			continue
 		}
 
-		byteJson, errTranslated := ioutil.ReadFile(dir + val.Name())
-		if errTranslated != nil {
-			return errTranslated
+		byteJson, err := ioutil.ReadFile(dir + val.Name())
+		if err != nil {
+			return err
 		}
 
 		for key, translated := range UtilsJsonToMap(byteJson) {
 			message.SetString(language.MustParse(ln), key, translated.(string))
 		}
 
-		Tag, errTag := translate.LanguageFormat(ln)
-		if errTag != nil {
-			panic(errTag.Error())
+		Tag, err := translate.LanguageFormat(ln)
+		if err != nil {
+			return err
 		}
 
 		translations[Tag] = message.NewPrinter(Tag)
 	}
 
 	Translated = translate
-	return nil
+	return
 }
 
-func (translate *i18n) LanguageFormat(ln string) (language.Tag, error) {
+func (translate *i18n) LanguageFormat(ln string) (tag language.Tag, err error) {
 	if ok, _ := UtilsStrContains(ln, "cn"); ok {
-		return language.Chinese, nil
+		tag = language.Chinese
+		return
 	}
 
 	languages := Env.GET("Languages.Lns", []interface{}{}).([]interface{})
 	if ok, _ := UtilsStrContains(ln, languages ...); ok == false {
-		return language.English, errors.New("lost env languages configs")
+		tag = language.English
+		err = errors.New("lost env languages configs")
+		return
 	}
 
-	return language.MustParse(ln), nil
+	tag = language.MustParse(ln)
+	return
 }

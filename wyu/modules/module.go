@@ -41,9 +41,8 @@ func wYuEnv() {
 	pflag.String("env", "", "environment configure")
 	pflag.Parse()
 
-	var env Vipers = NewVipers()
-
-	err := env.Vipers().Env.BindPFlags(pflag.CommandLine)
+	env := NewVipers()
+	err := env.Env.BindPFlags(pflag.CommandLine)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -119,15 +118,14 @@ func wYuSrcdb() {
 func wYuRedis() {
 	envRedis := Env.GET("Redis", []interface{}{}).([]interface{})
 	if len(envRedis) < 1 {
-		panic("redis configs error")
+		panic("redis configs error in modules/module.go")
 	}
 
 	for _, rd := range envRedis {
 		var src *rdSource
 		toMap := UtilsInterfaceToStringInMap(rd.(map[interface{}]interface{}))
 
-		err := UtilsMapToStruct(toMap, &src)
-		if err != nil {
+		if err := UtilsMapToStruct(toMap, &src); err != nil {
 			continue
 		}
 

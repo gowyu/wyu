@@ -19,14 +19,10 @@ func NewTestsModel() *TestsModel {
 	}
 }
 
-func (m *TestsModel) FetchAllByCondition(dbInitialized configs.MdbInitialized) []Tests {
-	src := make([]Tests, 0)
-	err := m.models.FetchAllByCondition(dbInitialized, &src)
+func (m *TestsModel) FetchAllByCondition(dbInitialized configs.MdbInitialized) (src []Tests, err error) {
+	src = make([]Tests, 0)
+	err = m.models.FetchAllByCondition(dbInitialized, &src)
 
-	if err != nil {
-		return nil
-	} else {
-		return src
-	}
+	return
 }
 

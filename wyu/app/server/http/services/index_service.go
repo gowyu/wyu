@@ -42,5 +42,6 @@ func (s *indexService) Test(cols []string, query interface{}, args ...interface{
 		dbInitialized.QueryArgs = args
 	}
 
-	return s.mTest.FetchAllByCondition(dbInitialized)
+	wYuTests, _ := s.mTest.FetchAllByCondition(dbInitialized)
+	return wYuTests
 }

@@ -95,7 +95,7 @@ func (ad *autoload) ginInitialized() {
 		}
 
 		prefix := modules.Env.GET("Logs.Prefix", "wYu").(string)
-		fn := dir + "/" + prefix + "_" + time.Now().String() + ".log"
+		fn := dir + "/" + prefix + "_" + time.Now().Format("2006-01-02") + ".log"
 		f, _ := os.Create(fn)
 
 		gin.DefaultWriter = io.MultiWriter(f)

@@ -29,7 +29,11 @@ func UtilsMergeToMap(data ...map[string]interface{}) map[string]interface{} {
 
 func UtilsJsonToMap(data []byte) map[string]interface{} {
 	var toMap map[string]interface{}
-	json.Unmarshal(data, &toMap)
+
+	err := json.Unmarshal(data, &toMap)
+	if err != nil {
+		return nil
+	}
 
 	return toMap
 }

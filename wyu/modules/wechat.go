@@ -39,10 +39,10 @@ func (we *WeChat) AuthRequest(writer http.ResponseWriter, req *http.Request, red
 	auth := we.wc.GetOauth()
 	err = auth.Redirect(writer, req, redirectURL, scope, state)
 	if err != nil {
-		return err
+		return
 	}
 
-	return nil
+	return
 }
 
 func (we *WeChat) RedirectURI(code string) (err error, resToken oauth.ResAccessToken, userInfo oauth.UserInfo) {
