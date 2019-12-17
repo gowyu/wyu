@@ -60,21 +60,21 @@ func main() {
 
 		if data == "0" || data == "run" {
 			if err := console.start(); err != nil {
-				fmt.Println(err.Error())
+				console.stdout(err.Error())
 				break
 			}
 		}
 
 		if data == "1" || data == "stop" {
 			if err := console.stop(true); err != nil {
-				fmt.Println(err.Error())
+				console.stdout(err.Error())
 				break
 			}
 		}
 
 		if data == "2" || data == "reload" {
 			if err := console.reload(); err != nil {
-				fmt.Println(err.Error())
+				console.stdout(err.Error())
 				break
 			}
 		}
@@ -82,20 +82,20 @@ func main() {
 		if data == "3" || data == "pid" {
 			d, err := console.showPid()
 			if err != nil {
-				fmt.Printf("» PID » Error Process ID: %v\n", err.Error())
+				console.stdout("PID", fmt.Sprintf("Error Process ID: %v", err.Error()))
 			} else {
-				fmt.Printf("» PID » Shown Process ID: %s\n", d)
+				console.stdout("PID", fmt.Sprintf("Shown Process ID: %v", d))
 			}
 		}
 
 		if strings.ContainsAny(data, "-c") || strings.ContainsAny(data, "4") {
-			fmt.Printf("» CTRL » Add Controller!\n")
+			console.stdout("CTRL", "Add Controller!")
 		}
 
 		if strings.ContainsAny(data, "-h") || strings.ContainsAny(data, "8") {
 			help := strings.Split(data, ":")
 			if len(help) != 2 {
-				fmt.Printf("» HELP » Plz Add Helper Content!\n")
+				console.stdout("HELP", "Plz Add Helper Content!")
 			} else {
 				switch help[1] {
 				case "run":
@@ -105,30 +105,30 @@ func main() {
 					break
 
 				case "stop":
-					fmt.Printf("» 停止应用\n")
+					console.stdout("停止应用")
 					break
 
 				case "reload":
-					fmt.Printf("» 重启应用\n")
+					console.stdout("重启应用")
 					break
 
 				case "pid":
-					fmt.Printf("» 查看正在运行中的进程号\n")
+					console.stdout("查看正在运行中的进程号")
 					break
 
 				default:
-					fmt.Printf("» Help » Plz Add Correct Helper Content[run/stop/reload]!\n")
+					console.stdout("HELP", "Plz Add Correct Helper Content[run/stop/reload]!")
 					break
 				}
 			}
 		}
 
 		if console.noCommand(data, numbers ...) == false {
-			fmt.Printf("» Unknown » command error « %v \n", data)
+			console.stdout("UNKNOWN", "command error")
 		}
 
 		if len(data) == 0 || data == "9" || data == "exit" {
-			fmt.Printf("» EXIT » exit command!\n\n")
+			console.stdout("EXIT", "exit command!\n")
 			break
 		}
 	}
@@ -147,10 +147,9 @@ func New(args []string) *cmd {
 }
 
 func (console *cmd) start() (err error) {
-	exelsof := exec.Command("lsof", "-t", "-i", ":8887")
-	_, err = exelsof.Output()
+	o, err := console.showPid()
 	if err == nil {
-		fmt.Printf("» running ... [%v]\n", err)
+		console.stdout(fmt.Sprintf("running ... [%v:%v]", o, err))
 		_, err = console.isQuit()
 		return
 	}
@@ -162,37 +161,34 @@ func (console *cmd) start() (err error) {
 	argsEnv := "--env="+console.args[0]
 	command := exec.Command("./start", argsEnv)
 
-	err = command.Start()
-	if err != nil {
+	console.stdout("go run ... ")
+	if err = command.Start(); err != nil {
 		return
 	}
 
-	fmt.Printf("» RUN  » application start, [PID] %d running ...\n", command.Process.Pid)
+	console.stdout("RUN", fmt.Sprintf("application start, [PID] %d running ...", command.Process.Pid))
 	_, err = console.isQuit()
 
 	return
 }
 
 func (console *cmd) stop(Q bool) (err error) {
-	exelsof := exec.Command("lsof", "-t", "-i", ":8887")
-	o, err := exelsof.Output()
+	o, err := console.showPid()
 	if err != nil {
 		if Q {
-			fmt.Printf("» stopped!\n")
+			console.stdout("stopped")
 			_, err = console.isQuit()
 		}
 		return
 	}
 
-	oFields := strings.Fields(string(o))
-	command := exec.Command("kill", oFields[0])
-
-	err = command.Start()
-	if err != nil {
+	command := exec.Command("kill", o)
+	if err = command.Run(); err != nil {
 		return
 	}
 
-	fmt.Printf("» STOP » application ended, [PID] %v stop ...\n", oFields[0])
+	console.stdout("END", fmt.Sprintf("application ended, [PID] %v stop ...", o))
+	os.Remove("start")
 
 	if Q {
 		_, err = console.isQuit()
@@ -204,7 +200,7 @@ func (console *cmd) stop(Q bool) (err error) {
 func (console *cmd) reload() (err error) {
 	err = console.stop(false)
 	if err != nil {
-		err = errors.New(fmt.Sprintf("» stopped! error:%v\n", err.Error()))
+		err = errors.New(fmt.Sprintf("stopped! error: %v", err.Error()))
 		return
 	}
 
@@ -213,18 +209,21 @@ func (console *cmd) reload() (err error) {
 }
 
 func (console *cmd) ready() (err error) {
+	console.stdout("go mod tidy")
 	create := exec.Command("go", "mod", "tidy")
-	if err = create.Start(); err != nil {
+	if err = create.Run(); err != nil {
 		return
 	}
 
+	console.stdout("go mod vendor")
 	vendor := exec.Command("go", "mod", "vendor")
-	if err = vendor.Start(); err != nil {
+	if err = vendor.Run(); err != nil {
 		return
 	}
 
+	console.stdout("go build ... ")
 	builds := exec.Command("go", "build", "-o", "start", "-mod=vendor", "app/main.go")
-	if err = builds.Start(); err != nil {
+	if err = builds.Run(); err != nil {
 		return
 	}
 
@@ -232,8 +231,7 @@ func (console *cmd) ready() (err error) {
 }
 
 func (console *cmd) isQuit() (d string, err error) {
-	fmt.Printf("\n» do you wanna quit the command?[y/n]: ")
-
+	fmt.Printf("\n» do you wanna quit the command?[y/n] › ")
 	d, err = console.getReadLine()
 	if err != nil {
 		d = ""
@@ -241,7 +239,7 @@ func (console *cmd) isQuit() (d string, err error) {
 	}
 
 	if strings.ToLower(d) == "y" {
-		err = errors.New(fmt.Sprintf("» quit command!\n\n"))
+		err = errors.New(fmt.Sprintf("quit command!\n"))
 		return
 	}
 
@@ -263,9 +261,10 @@ func (console *cmd) getReadLine() (d string, err error) {
 
 func (console *cmd) showPid() (d string, err error) {
 	command := exec.Command("lsof", "-t", "-i", ":8887")
+
 	o, err := command.Output()
 	if err != nil {
-		err = errors.New(fmt.Sprintf("» stopped!, No Process ID: %v", err.Error()))
+		err = errors.New(fmt.Sprintf("stopped!, No Process ID: %v", err.Error()))
 		return
 	}
 
@@ -274,6 +273,10 @@ func (console *cmd) showPid() (d string, err error) {
 }
 
 func (console *cmd) noCommand(data string, nums ...interface{}) (b bool) {
+	if len(nums) == 0 {
+		return
+	}
+
 	for _, val := range nums {
 		if strings.Contains(data, val.(string)) {
 			b = true
@@ -327,4 +330,20 @@ func (console *cmd) checkEnvironment() (err error) {
 	}
 
 	return
+}
+
+func (console *cmd) stdout(data ...string) {
+	switch len(data) {
+	case 1:
+		fmt.Printf("» %v\n", data[0])
+		break
+
+	case 2:
+		fmt.Printf("» %v » %v\n", data[0], data[1])
+		break
+
+	default:
+		fmt.Printf("» unkown error!")
+		break
+	}
 }

@@ -26,3 +26,12 @@ func (m *TestsModel) FetchAllByCondition(dbInitialized configs.MdbInitialized) (
 	return
 }
 
+func (m *TestsModel) Total() (nums int64, err error) {
+	nums, err = m.models.Total(&Tests{})
+	if err != nil {
+		return
+	}
+
+	return
+}
+

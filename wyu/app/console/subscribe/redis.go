@@ -4,9 +4,7 @@ import (
 	"wyu/modules"
 )
 
-type rd struct {
-
-}
+type rd struct {}
 
 func (subscribed *rd) Subscribe(channels ...string) {
 	subscribe := modules.InstanceRedis().Engine().Subscribe(channels ...)

@@ -1,6 +1,7 @@
 package subscribe
 
 import (
+	"fmt"
 	"wyu/configs"
 	"wyu/modules"
 )
@@ -20,6 +21,7 @@ func init() {
 
 	if modules.Env.GET("YuRedisSubscribe", false).(bool) {
 		if configs.YuRoutes != nil && len(configs.YuRoutes) != 0 {
+			fmt.Println("test success")
 			go new(subscribe).do()
 		}
 	}

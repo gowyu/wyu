@@ -15,6 +15,8 @@ func New(engine *xorm.Engine) *Models {
 	}
 }
 
+//func (m *Models) FetchOneByCondition(dbInit)
+
 func (m *Models) FetchAllByCondition(dbInitialized configs.MdbInitialized, data interface{}) (err error) {
 	var xSession *xorm.Session
 
@@ -36,5 +38,10 @@ func (m *Models) FetchAllByCondition(dbInitialized configs.MdbInitialized, data 
 		err = m.engine.Find(data)
 	}
 
+	return
+}
+
+func (m *Models) Total(data interface{}) (nums int64, err error) {
+	nums, err = m.engine.Count(data)
 	return
 }

@@ -5,32 +5,23 @@ import (
 	"wyu/configs"
 )
 
-type IndexService interface {
-	Test(cols []string, query interface{}, args ...interface{}) []wYu.Tests
-}
-
-type indexService struct {
+type IndexSrv struct {
 	srv *Service
 	mTest *wYu.TestsModel
 }
 
-var (
-	_ Services     = &indexService{}
-	_ IndexService = &indexService{}
-)
-
-func NewIndexService() *indexService {
-	return &indexService{
+func NewIndexService() *IndexSrv {
+	return &IndexSrv {
 		srv:   NewService(),
 		mTest: wYu.NewTestsModel(),
 	}
 }
 
-func (s *indexService) Paginator(strPage string, strSize string) map[string]interface{} {
+func (s *IndexSrv) Paginator(strPage string, strSize string) map[string]interface{} {
 	return nil
 }
 
-func (s *indexService) Test(cols []string, query interface{}, args ...interface{}) []wYu.Tests {
+func (s *IndexSrv) Test(cols []string, query interface{}, args ...interface{}) []wYu.Tests {
 	var dbInitialized configs.MdbInitialized
 
 	if cols != nil {
@@ -44,4 +35,13 @@ func (s *indexService) Test(cols []string, query interface{}, args ...interface{
 
 	wYuTests, _ := s.mTest.FetchAllByCondition(dbInitialized)
 	return wYuTests
+}
+
+func (s *IndexSrv) Nums() int {
+	nums, err := s.mTest.Total()
+	if err != nil {
+		return 0
+	}
+
+	return int(nums)
 }
