@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/gin-gonic/gin"
 	"wyu/app/server/http/services"
+	"wyu/configs"
 	"wyu/modules"
 )
 
@@ -31,19 +32,18 @@ func (c *Index) Tests(gc *gin.Context) {
 			"msg": "test success testing ...",
 			"txt": c.srvIndex.Test(nil, nil, nil),
 			"num": c.srvIndex.Nums(),
-			"rds": c.ctr.srv.Cache.Get("test").Val(),
+			"rds": configs.YuTest,
 			"exe": c.ctr.srv.Cache.Exists("test").Val(),
 		},
 	)
 }
 
 func (c *Index) Htmls(gc *gin.Context) {
-	c.ctr.srv.Cache.Publish("test","test publish HTML success ...")
 	c.ctr.To(gc, gin.H{"msg": "test success html ..."}, "index.html")
 }
 
 func (c *Index) Cache(gc *gin.Context) {
-	c.ctr.srv.Cache.Publish("test","test publish success1 ...")
+	c.ctr.srv.Cache.Publish("service","test publish success1 ...")
 	c.ctr.To(
 		gc,
 		gin.H{

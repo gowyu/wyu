@@ -1,7 +1,9 @@
 package subscribe
 
 import (
+	"wyu/app/console/provider"
 	"wyu/modules"
+
 )
 
 type rd struct {}
@@ -14,13 +16,9 @@ func (subscribed *rd) Subscribe(channels ...string) {
 		return
 	}
 
+	srv := provider.NewSubscribe()
 	for msg := range subscribe.Channel() {
-		switch msg.Channel {
-		case "test":
-			continue
-		default:
-			continue
-		}
+		srv.Do(msg)
 	}
 }
 

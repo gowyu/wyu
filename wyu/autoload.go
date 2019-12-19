@@ -33,9 +33,7 @@ func init() {
 	ad.running()
 }
 
-type autoload struct {
-
-}
+type autoload struct {}
 
 func (ad *autoload) running() {
 	ad.ginInitialized()

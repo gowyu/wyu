@@ -46,7 +46,7 @@ func init() {
 			"HIndexCache" +SP+ "get" +SP+ "/cache": []gin.HandlerFunc{HttpToIndex.Cache},
 		},
 		"APIS": map[string][]gin.HandlerFunc{
-			"ATest" +SP+ "get" +SP+ "/test": []gin.HandlerFunc{ApisToTests.Tests},
+			"ATests" +SP+ "get" +SP+ "/tests": []gin.HandlerFunc{ApisToTests.Tests},
 		},
 	}
 }

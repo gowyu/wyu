@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	wYu "wyu/app/models/wYu_model"
 	"wyu/configs"
 )
@@ -44,4 +45,9 @@ func (s *IndexSrv) Nums() int {
 	}
 
 	return int(nums)
+}
+
+func (s IndexSrv) Subscribed(channel string, content interface{}) {
+	configs.YuTest = channel + ":" + content.(string)
+	fmt.Println("test index provider:", channel, "->", content)
 }

@@ -1,7 +1,7 @@
 package subscribe
 
 import (
-	"fmt"
+	"github.com/spf13/cast"
 	"wyu/configs"
 	"wyu/modules"
 )
@@ -20,10 +20,7 @@ func init() {
 	}
 
 	if modules.Env.GET("YuRedisSubscribe", false).(bool) {
-		if configs.YuRoutes != nil && len(configs.YuRoutes) != 0 {
-			fmt.Println("test success")
-			go new(subscribe).do()
-		}
+		go new(subscribe).do()
 	}
 }
 
@@ -32,7 +29,7 @@ type subscribe struct {
 }
 
 func (subscribed *subscribe) do() {
-	new(rd).Subscribe(configs.YuSubscribe ...)
+	new(rd).Subscribe(cast.ToStringSlice(configs.YuSubscribe) ...)
 }
 
 

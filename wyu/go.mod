@@ -13,6 +13,7 @@ require (
 	github.com/gomodule/redigo v2.0.0+incompatible // indirect
 	github.com/robfig/cron v1.2.0
 	github.com/silenceper/wechat v2.0.1+incompatible
+	github.com/spf13/cast v1.3.0
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.6.1
 	golang.org/x/text v0.3.2
