@@ -14,9 +14,9 @@ func NewExceptions() *Exceptions {
 }
 
 func (exp *Exceptions) NoRoute(c *gin.Context) {
-	c.JSON(http.StatusNotFound, gin.H{"status":404})
+	c.JSON(http.StatusNotFound, gin.H{"status":404, "msg":"No Routes", "data":[]interface{}{}})
 }
 
 func (exp *Exceptions) NoMethod(c *gin.Context) {
-
+	c.JSON(http.StatusNotFound, gin.H{"status":404, "msg":"No Method", "data":[]interface{}{}})
 }

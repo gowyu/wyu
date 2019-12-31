@@ -5,6 +5,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"github.com/spf13/viper"
 	"os"
 	"os/exec"
 	"strings"
@@ -12,7 +13,7 @@ import (
 
 /**
  * Todo: BUILD: go build -o Yu -mod=vendor app/console/cmd/main.go | RUN: ./Yu dev --env=dev
- * Todo: RUN: go run -mod=vendor app/console/cmd/main.go dev --env=dev
+ * Todo: RUN: go run -mod=vendor app/console/cmd/main.go dev
 **/
 
 var (
@@ -41,11 +42,41 @@ func main() {
 	args := flag.Args()
 
 	if args == nil || len(args) != 1 {
-		fmt.Println("» args error! (eg: dev)")
+		fmt.Println("» args error!「 eg:dev 」")
+		return
+	}
+
+	okEnv := true
+	for _, val := range []string{"dev", "stg", "prd"} {
+		if strings.Contains(args[0], val) {
+			okEnv = false
+		}
+	}
+
+	if okEnv {
+		fmt.Println("» args error!「 must be around dev, stg or prd 」")
 		return
 	}
 
 	console := New(args)
+
+	env := viper.New()
+	env.SetConfigType("yaml")
+	env.AddConfigPath(".")
+	env.SetConfigName(".env." + console.args[0])
+
+	if err := env.ReadInConfig(); err != nil {
+		fmt.Println("» config file error!「",".env."+console.args[0]+".yaml","」")
+		return
+	}
+
+	ok := env.IsSet("App.Port")
+	if ok {
+		console.port = env.GetString("App.Port")
+	} else {
+		console.port = "8887"
+	}
+
 	if err := console.checkEnvironment(); err != nil {
 		fmt.Printf(err.Error())
 		return
@@ -80,7 +111,7 @@ func main() {
 		}
 
 		if data == "3" || data == "pid" {
-			d, err := console.showPid()
+			d, err := console.arrPids()
 			if err != nil {
 				console.stdout("PID", fmt.Sprintf("Error Process ID: %v", err.Error()))
 			} else {
@@ -135,6 +166,7 @@ func main() {
 }
 
 type cmd struct {
+	port string
 	args []string
 	reader *bufio.Reader
 }
@@ -147,11 +179,19 @@ func New(args []string) *cmd {
 }
 
 func (console *cmd) start() (err error) {
-	o, err := console.showPid()
-	if err == nil {
-		console.stdout(fmt.Sprintf("running ... [%v:%v]", o, err))
-		_, err = console.isQuit()
-		return
+	o, err := console.arrPids()
+
+	if len(o) > 1 {
+		err = console.stop(false)
+		if err != nil {
+			return
+		}
+	} else {
+		if err == nil || o != nil {
+			console.stdout(fmt.Sprintf("running ... [%v:%v]", o, err))
+			_, err = console.isQuit()
+			return
+		}
 	}
 
 	if err = console.ready(); err != nil {
@@ -173,21 +213,25 @@ func (console *cmd) start() (err error) {
 }
 
 func (console *cmd) stop(Q bool) (err error) {
-	o, err := console.showPid()
+	o, err := console.arrPids()
 	if err != nil {
 		if Q {
 			console.stdout("stopped")
 			_, err = console.isQuit()
 		}
+
 		return
 	}
 
-	command := exec.Command("kill", o)
-	if err = command.Run(); err != nil {
-		return
+	for _, pid := range o {
+		command := exec.Command("kill", pid)
+		if err = command.Run(); err != nil {
+			return
+		}
+
+		console.stdout("END", fmt.Sprintf("application ended, [PID] %v stop ...", pid))
 	}
 
-	console.stdout("END", fmt.Sprintf("application ended, [PID] %v stop ...", o))
 	os.Remove("start")
 
 	if Q {
@@ -231,7 +275,7 @@ func (console *cmd) ready() (err error) {
 }
 
 func (console *cmd) isQuit() (d string, err error) {
-	fmt.Printf("\n» do you wanna quit the command?[y/n] › ")
+	fmt.Printf("\n» quit the command?[y/n] › ")
 	d, err = console.getReadLine()
 	if err != nil {
 		d = ""
@@ -259,8 +303,8 @@ func (console *cmd) getReadLine() (d string, err error) {
 	return
 }
 
-func (console *cmd) showPid() (d string, err error) {
-	command := exec.Command("lsof", "-t", "-i", ":8887")
+func (console *cmd) arrPids() (d []string, err error) {
+	command := exec.Command("lsof", "-t", "-i", ":"+console.port)
 
 	o, err := command.Output()
 	if err != nil {
@@ -268,7 +312,7 @@ func (console *cmd) showPid() (d string, err error) {
 		return
 	}
 
-	d = strings.Fields(string(o))[0]
+	d = strings.Fields(string(o))
 	return
 }
 

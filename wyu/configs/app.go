@@ -1,20 +1,26 @@
 package configs
+/**
+ * Todo: System Struct
+ */
+
 
 /**
- * Controller Post Construct
+ * Todo: Controller Post Construct
 **/
 
 
 /* ==================================================================================================== */
 
 /**
- * Models & Basic Construct
+ * Todo: Models & Basic Construct
 **/
 
 type MdbInitialized struct {
-	Query		interface{}
-	QueryArgs 	[]interface{}
-	Columns 	[]string
+	Types string // Todo: "ONE"->"FetchOne" "ALL"->"FetchAll"
+	Joins [][]interface{}
+	Query interface{}
+	QueryArgs []interface{}
+	Columns []string
 }
 
 type Y struct {
@@ -42,17 +48,17 @@ type Logs struct {
 /* ==================================================================================================== */
 
 /**
- * .Yaml files
+ * Todo: .Yaml files
  */
-type Tpls struct {
-	Status bool `json:"status"`
-	Resources string `json:"resources"`
-	Dir string `json:"dir"`
-	DirViews string `json:"dir_views"`
-	DirLayout string `json:"dir_layout"`
-	DirShared string `json:"dir_shared"`
-	Suffix string `json:"suffix"`
-	StaticStatus bool `json:"static_status"`
-	Static string `json:"static"`
-	StaticIcon string `json:"static_icon"`
-}
+//type Tpls struct {
+//	Status bool `json:"status"`
+//	Resources string `json:"resources"`
+//	Dir string `json:"dir"`
+//	DirViews string `json:"dir_views"`
+//	DirLayout string `json:"dir_layout"`
+//	DirShared string `json:"dir_shared"`
+//	Suffix string `json:"suffix"`
+//	StaticStatus bool `json:"static_status"`
+//	Static string `json:"static"`
+//	StaticIcon string `json:"static_icon"`
+//}

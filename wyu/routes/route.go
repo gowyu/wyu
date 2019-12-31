@@ -53,9 +53,14 @@ func init() {
 
 func To(r *gin.Engine) {
 	/**
-	 * No Route To Redirect
+	 * Todo: No Routes To Redirect
 	**/
-	r.NoRoute(exceptions.NewExceptions().NoRoute)
+	r.NoRoute(new(exceptions.Exceptions).NoRoute)
+
+	/**
+	 * Todo: No Method To Redirect
+	**/
+	r.NoMethod(new(exceptions.Exceptions).NoMethod)
 	
 	for _, to := range Yu {
 		if _, ok := YuRoutes[to.Tag()]; ok == false {
