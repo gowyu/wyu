@@ -1,8 +1,17 @@
 package wYu_model
-const db string = "wYu" // Database Name
 
-var (
-	ColsTest []string = []string{"id", "name"}
+import (
+	"wyu/app/repositories/wYu"
 )
+
+const db string = "wYu" 	// Database Name
+
+type Tests wYu.Tests 		// Table: tests
+type TestTest wYu.TestTest 	// Table: test_test
+
+type TestToTest struct {
+	Tests `xorm:"extends"`
+	TestTest `xorm:"extends"`
+}
 
 

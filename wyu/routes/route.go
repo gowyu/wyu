@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"html/template"
 	"strings"
@@ -10,8 +11,6 @@ import (
 	"wyu/configs"
 	"wyu/modules"
 )
-
-const SP string = "->"
 
 type Routes interface {
 	Tag() string
@@ -40,13 +39,23 @@ func init() {
 
 	YuRoutes = map[string]map[string][]gin.HandlerFunc{
 		"HTTP": map[string][]gin.HandlerFunc{
-			"HIndex" +SP+ "get" +SP+ "/": []gin.HandlerFunc{HttpToIndex.Index},
-			"HIndexTests" +SP+ "get" +SP+ "/tests": []gin.HandlerFunc{HttpToIndex.Tests},
-			"HIndexHtmls" +SP+ "get" +SP+ "/htmls": []gin.HandlerFunc{HttpToIndex.Htmls},
-			"HIndexCache" +SP+ "get" +SP+ "/cache": []gin.HandlerFunc{HttpToIndex.Cache},
+			"HIndex" +configs.YuSep+ "get" +configs.YuSep+ "/": []gin.HandlerFunc{
+				HttpToIndex.Index,
+			},
+			"HIndexTests" +configs.YuSep+ "get" +configs.YuSep+ "/tests": []gin.HandlerFunc{
+				HttpToIndex.Tests,
+			},
+			"HIndexHtmls" +configs.YuSep+ "get" +configs.YuSep+ "/htmls": []gin.HandlerFunc{
+				HttpToIndex.Htmls,
+			},
+			"HIndexCache" +configs.YuSep+ "get" +configs.YuSep+ "/cache": []gin.HandlerFunc{
+				HttpToIndex.Cache,
+			},
 		},
 		"APIS": map[string][]gin.HandlerFunc{
-			"ATests" +SP+ "get" +SP+ "/tests": []gin.HandlerFunc{ApisToTests.Tests},
+			"ATests" +configs.YuSep+ "get" +configs.YuSep+ "/tests": []gin.HandlerFunc{
+				ApisToTests.Tests,
+			},
 		},
 	}
 }
@@ -76,7 +85,7 @@ func To(r *gin.Engine) {
 }
 
 func ToFunc(tpl ...interface{}) template.FuncMap {
-	var tplFunc template.FuncMap = template.FuncMap{}
+	tplFunc := template.FuncMap{}
 
 	for _, to := range Yu {
 		if ok, _ := modules.UtilsStrContains(to.Tag(), tpl ...); ok == false {
@@ -95,9 +104,50 @@ func ToFunc(tpl ...interface{}) template.FuncMap {
 	return tplFunc
 }
 
+func ToLoggerWithFormatter() gin.HandlerFunc {
+	return gin.LoggerWithFormatter(func(param gin.LogFormatterParams) (strLog string) {
+		msg := exceptions.TxT("l^aa")
+
+		if param.ErrorMessage != "" {
+			msg = param.ErrorMessage
+		}
+
+		if param.StatusCode != 200 || param.ErrorMessage != "" {
+			strLog = fmt.Sprintf(`
+---------------------------------------------------------------------------------------------------
+%s » %s » %s
+%s » %s » %s » %s 
+%s » %s
+%s » %d
+%s » %s
+%s » %v
+---------------------------------------------------------------------------------------------------
+`,
+				exceptions.TxT("l^ab"),
+				param.ClientIP,
+				param.TimeStamp.Format("2006-01-02 15:04:05"),
+				exceptions.TxT("l^ac"),
+				param.Method,
+				param.Request.Proto,
+				param.Path,
+				exceptions.TxT("l^ad"),
+				param.Request.UserAgent(),
+				exceptions.TxT("l^ae"),
+				param.StatusCode,
+				exceptions.TxT("l^af"),
+				param.Latency,
+				exceptions.TxT("l^ag"),
+				msg,
+			)
+		}
+
+		return
+	})
+}
+
 func do(g *gin.RouterGroup, toFunc map[string][]gin.HandlerFunc) {
 	for route, ctrl := range toFunc {
-		Y := strings.Split(route, SP)
+		Y := strings.Split(route, configs.YuSep)
 
 		if len(Y) != 3 {
 			continue

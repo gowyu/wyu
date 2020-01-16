@@ -11,6 +11,8 @@ import (
 const(
 	SelectToOne string = "ONE"
 	SelectToAll string = "ALL"
+	SelectToASC string = "ASC"
+	SelectToESC string = "DESC"
 )
 
 type Models struct {
@@ -62,20 +64,41 @@ func (m *Models) Select(dbInitialized configs.MdbInitialized, data interface{}) 
 	engine := m.Engine.NewSession()
 	defer engine.Close()
 
-	if dbInitialized.Columns != nil {
-		engine = engine.Cols(dbInitialized.Columns ...)
+	/**
+	 * Todo: Select Table & Columns
+	 */
+	if dbInitialized.Table != "" && dbInitialized.Field != "" {
+		if ok, _ := engine.IsTableExist(dbInitialized.Table); ok == false {
+			_, file, line, _ := runtime.Caller(1)
+			err = exceptions.Err("m^ad", file, cast.ToString(line))
+			return
+		}
+		
+		engine = engine.Table(dbInitialized.Table).Select(dbInitialized.Field)
 	} else {
-		engine = engine.Cols()
+		if dbInitialized.Columns != nil {
+			engine = engine.Cols(dbInitialized.Columns ...)
+		} else {
+			engine = engine.Cols()
+		}
 	}
 
-	if dbInitialized.Query != nil && dbInitialized.QueryArgs != nil {
-		engine = engine.Where(dbInitialized.Query, dbInitialized.QueryArgs ...)
-	}
-
+	/**
+	 * Todo: Add Join Table (INNER|LEFT|RIGHT)
+	 */
 	if dbInitialized.Joins != nil {
 		for _, join := range dbInitialized.Joins {
-			engine = engine.Join(join[0].(string), join[1], join[2].(string))
+			if len(join) > 2 {
+				engine = engine.Join(join[0].(string), join[1], join[2].(string))
+			}
 		}
+	}
+
+	/**
+	 * Todo: Add Condition
+	 */
+	if dbInitialized.Query != nil && dbInitialized.QueryArgs != nil {
+		engine = engine.Where(dbInitialized.Query, dbInitialized.QueryArgs ...)
 	}
 
 	switch dbInitialized.Types {
@@ -84,6 +107,26 @@ func (m *Models) Select(dbInitialized configs.MdbInitialized, data interface{}) 
 		return
 
 	case SelectToAll:
+		/**
+		 * Todo: Add OrderBy (ASC|DESC)
+		 */
+		if len(dbInitialized.OrderArgs) > 0 {
+			if dbInitialized.OrderType == SelectToASC {
+				engine = engine.Asc(dbInitialized.OrderArgs ...)
+			}
+
+			if dbInitialized.OrderType == SelectToESC {
+				engine = engine.Desc(dbInitialized.OrderArgs ...)
+			}
+		}
+
+		/**
+		 * Todo: Limit & Start
+		 */
+		if dbInitialized.Limit != 0 && len(dbInitialized.Start) > 0 {
+			engine = engine.Limit(dbInitialized.Limit, dbInitialized.Start ...)
+		}
+
 		err = engine.Find(data)
 		return
 
@@ -92,4 +135,8 @@ func (m *Models) Select(dbInitialized configs.MdbInitialized, data interface{}) 
 		err = exceptions.Err("m^ab", file, cast.ToString(line))
 		return
 	}
+}
+
+func (m *Models) ToSerialized() {
+
 }

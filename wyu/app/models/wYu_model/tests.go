@@ -5,13 +5,9 @@ import (
 	"runtime"
 	"wyu/app/exceptions"
 	"wyu/app/models"
-	"wyu/app/repositories/wYu"
 	"wyu/configs"
 	"wyu/modules"
 )
-
-type Tests wYu.Tests // Table: tests
-type TestTest wYu.TestTest // Table: test_test
 
 type TestsModel struct {
 	models *models.Models
@@ -21,6 +17,18 @@ func NewTestsModel() *TestsModel {
 	return &TestsModel{
 		models: models.New(modules.InstanceClusterDB(db).Engine()),
 	}
+}
+
+/**
+ * Todo: Paginator
+ */
+func (m *TestsModel) Tables(dbInitialized configs.MdbInitialized) (src []Tests, err error) {
+	dbInitialized.Types = models.SelectToAll
+
+	src = make([]Tests, 0)
+	err = m.models.Select(dbInitialized, &src)
+
+	return
 }
 
 /**
@@ -117,6 +125,15 @@ func (m *TestsModel) FetchAll(dbInitialized configs.MdbInitialized) (src []Tests
 	dbInitialized.Types = models.SelectToAll
 
 	src = make([]Tests, 0)
+	err = m.models.Select(dbInitialized, &src)
+
+	return
+}
+
+func (m *TestsModel) FetchAllJoin(dbInitialized configs.MdbInitialized) (src []TestToTest, err error) {
+	dbInitialized.Types = models.SelectToAll
+
+	src = make([]TestToTest, 0)
 	err = m.models.Select(dbInitialized, &src)
 
 	return

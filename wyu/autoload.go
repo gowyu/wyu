@@ -36,15 +36,11 @@ func init() {
 type autoload struct {}
 
 func (ad *autoload) running() {
-	ad.ginInitialized()
-
-	r := gin.Default()
-	r = ad.ginTemplateStatic(r)
-
+	r := ad.ginInitialized()
 	routes.To(r)
 
 	/**
-	 * TODO: Loading Templates
+	 * Todo: Loading Templates
 	**/
 	bTpl := modules.Env.GET("Temp.Status", false).(bool)
 	if bTpl {
@@ -70,7 +66,54 @@ func (ad *autoload) running() {
 	r.Run(":" + modules.Env.GET("App.Port", ginPort).(string))
 }
 
-func (ad *autoload) ginTemplateStatic(r *gin.Engine) *gin.Engine {
+func (ad *autoload) ginInitialized() (r *gin.Engine) {
+	/**
+	 * Todo: Configure Logs
+	 */
+	if modules.Env.GET("Logs.Status", false).(bool) {
+		dir := modules.Env.GET("Logs.Root", "./storage/logs").(string)
+
+		_, err := os.Stat(dir)
+		if err != nil {
+			panic(err.Error())
+		}
+
+		prefix := modules.Env.GET("Logs.Prefix", "wYu").(string)
+		fn := dir + "/" + prefix + "_" + time.Now().Format("2006-01-02") + ".log"
+		f, _ := os.Create(fn)
+
+		/**
+		 * Todo: Log in File
+		 */
+		gin.DefaultWriter = io.MultiWriter(f)
+	} else {
+		/**
+		 * Todo: Log in Command
+		 */
+		gin.ForceConsoleColor()
+	}
+
+	/**
+	 * Todo: SetMode = ReleaseMode:TestMode
+	 */
+	if modules.Env.Env.Get("env") == "prd" {
+		gin.SetMode(gin.ReleaseMode)
+	}
+
+	/**
+	 * Todo: Start Routes (gin.New() | gin.Default())
+	 */
+	r = gin.New()
+	r.Use(gin.Recovery())
+
+	/**
+	 * Todo: Configure LoggerWithFormatter
+	 */
+	r.Use(routes.ToLoggerWithFormatter())
+
+	/**
+	 * Todo: Configure Static Resources
+	 */
 	if modules.Env.GET("Temp.StaticStatus", false).(bool) {
 		static := modules.Env.GET("Temp.Static", "./resources/assets").(string)
 		staticIcon := modules.Env.GET("Temp.StaticIcon", "./resources/favicon.ico").(string)
@@ -79,30 +122,10 @@ func (ad *autoload) ginTemplateStatic(r *gin.Engine) *gin.Engine {
 		r.StaticFile("./favicon.ico", staticIcon)
 	}
 
-	return r
+	return
 }
 
-func (ad *autoload) ginInitialized() {
-	if modules.Env.GET("Logs.Status", false).(bool) {
-		dir := modules.Env.GET("Logs.Root", "./storage/logs").(string)
-
-		_, err := os.Stat(dir)
-		if err != nil {
-			panic(err.Error())
-			return
-		}
-
-		prefix := modules.Env.GET("Logs.Prefix", "wYu").(string)
-		fn := dir + "/" + prefix + "_" + time.Now().Format("2006-01-02") + ".log"
-		f, _ := os.Create(fn)
-
-		gin.DefaultWriter = io.MultiWriter(f)
-	} else {
-		gin.ForceConsoleColor()
-	}
-}
-
-func (ad *autoload) tplLoading(skeleton string, view string) []string {
+func (ad *autoload) tplLoading(skeleton string, view string) (arrTPL []string) {
 	TplSuffix := modules.Env.GET("Temp.Suffix", "html").(string)
 	dirLayout := modules.Env.GET("Temp.DirLayout", directory + "layout/").(string)
 
@@ -120,12 +143,12 @@ func (ad *autoload) tplLoading(skeleton string, view string) []string {
 
 	TplViews := modules.Env.GET("Temp.DirViews", directory + "view/").(string)
 
-	arrTPL := make([]string, 0)
+	arrTPL = make([]string, 0)
 	arrTPL = append(TplLayout, TplViews + skeleton + "/" + view)
 
 	for _, shared := range shareds {
 		arrTPL = append(arrTPL, shared)
 	}
 
-	return arrTPL
+	return
 }

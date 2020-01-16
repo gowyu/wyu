@@ -3,7 +3,6 @@ package subscribe
 import (
 	"wyu/app/console/provider"
 	"wyu/modules"
-
 )
 
 type rd struct {}

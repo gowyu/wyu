@@ -4,6 +4,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+/**
+ * Todo: Middleware Initialized
+**/
 func M() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		H := c.Request.Host
@@ -13,15 +16,10 @@ func M() gin.HandlerFunc {
 	}
 }
 
-func Ln(domain string) string {
-	return "cn"
-
-	// Todo: Select Languages
-	//sp := strings.Split(domain, ":")
-	//switch sp[0] {
-	//case "cn":
-	//	return "zh"
-	//default:
-	//	return "zh"
-	//}
+/**
+ * Todo: Select Languages
+**/
+func Ln(domain string) (str string) {
+	str = "cn"
+	return
 }

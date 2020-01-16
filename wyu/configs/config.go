@@ -1,8 +1,7 @@
 package configs
 
-const(
-	YuSuffix string = "html"
-	YuKey string = "wYuVersion"
+const (
+	YuSep string = "->"
 )
 
 var (
@@ -25,5 +24,12 @@ var (
 	 */
 	YuErr map[string]interface{} = map[string]interface{}{
 		"s^aa": "测试自定义错误提示",
+	}
+
+	/**
+	 * Todo: Txt customized in exceptions:txt
+	 */
+	YuTxT map[string]interface{} = map[string]interface{}{
+
 	}
 )

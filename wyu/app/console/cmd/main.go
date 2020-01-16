@@ -23,6 +23,7 @@ var (
 2 › RELOAD	» reload « 
 3 › PID		» pid 	 « 
 4 › CTRL	» -c	 «
+5 › BUILD	» build	 «
 8 › HELP	» -h 	 « » -h:run | -h:stop | -h:reload | -h:pid «
 9 › EXIT	» exit 	 « 
 	`
@@ -116,6 +117,13 @@ func main() {
 				console.stdout("PID", fmt.Sprintf("Error Process ID: %v", err.Error()))
 			} else {
 				console.stdout("PID", fmt.Sprintf("Shown Process ID: %v", d))
+			}
+		}
+
+		if data == "5" || data == "build" {
+			if err := console.build();err != nil {
+				console.stdout(err.Error())
+				break
 			}
 		}
 
@@ -253,6 +261,16 @@ func (console *cmd) reload() (err error) {
 }
 
 func (console *cmd) ready() (err error) {
+	console.stdout("go build ... ")
+	builds := exec.Command("go", "build", "-o", "start", "-mod=vendor", "app/main.go")
+	if err = builds.Run(); err != nil {
+		return
+	}
+
+	return
+}
+
+func (console *cmd) build() (err error) {
 	console.stdout("go mod tidy")
 	create := exec.Command("go", "mod", "tidy")
 	if err = create.Run(); err != nil {
