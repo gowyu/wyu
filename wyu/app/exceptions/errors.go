@@ -13,7 +13,8 @@ func init() {
 }
 
 /**
- * M: Models Error
+ * m^: Models Error
+ * w^: Middleware Error
  */
 var (
 	msg map[string]interface{} = map[string]interface{}{

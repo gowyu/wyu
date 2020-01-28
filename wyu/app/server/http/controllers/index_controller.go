@@ -24,6 +24,8 @@ func (c *Index) Index(gc *gin.Context) {
 }
 
 func (c *Index) Tests(gc *gin.Context) {
+	//fmt.Println(c.srvIndex.SendMail().Error())
+	c.srvIndex.Token()
 	c.ctr.To(
 		gc, gin.H{
 			//"msg": "test success testing ...",

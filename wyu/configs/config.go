@@ -9,6 +9,7 @@ var (
 
 	/**
 	 * Todo: Initialized Routes in routes:route
+	 * Todo: Exec::routes/route.go:do()
 	 */
 	YuRoutes map[string]string = map[string]string{}
 
@@ -30,6 +31,6 @@ var (
 	 * Todo: Txt customized in exceptions:txt
 	 */
 	YuTxT map[string]interface{} = map[string]interface{}{
-
+		"s^aa": "测试自定义txt文本内容",
 	}
 )

@@ -33,7 +33,9 @@ func init() {
 	ad.running()
 }
 
-type autoload struct {}
+type autoload struct {
+
+}
 
 func (ad *autoload) running() {
 	r := ad.ginInitialized()
@@ -87,6 +89,7 @@ func (ad *autoload) ginInitialized() (r *gin.Engine) {
 		 */
 		gin.DefaultWriter = io.MultiWriter(f)
 	} else {
+
 		/**
 		 * Todo: Log in Command
 		 */

@@ -14,11 +14,15 @@ const(
 
 type Services struct{
 	R *redis.Client
+	Token *modules.Token
+	Email *modules.Mail
 }
 
 func NewServices() *Services {
 	return &Services{
 		R: modules.InstanceRedis().Engine(),
+		Token: modules.YuToken,
+		Email: modules.YuEmail,
 	}
 }
 

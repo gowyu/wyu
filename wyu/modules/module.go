@@ -1,41 +1,60 @@
 package modules
 
 import (
+	"fmt"
 	"github.com/spf13/pflag"
+	"runtime"
 )
 
-type wYu struct {
+var (
+	YuEnv *vipers
+	YuToken *Token
+	YuEmail *Mail
+)
+
+type Yu struct {
 	Srcdb bool
 	Redis bool
 	I18nT bool
+	Email bool
 }
 
 func init() {
-	wYuEnv()
+	modules := New()
+	modules.wYuEnv()
+	modules.wYuToken()
 
-	if Env == nil {
-		panic("Error Env in module.go - init func()")
+	var Yu *Yu
+	UtilsMapToStruct(Env.GET("Yu", []interface{}{}), &Yu)
+
+	if Yu.Srcdb {
+		modules.wYuSrcdb()
 	}
 
-	var wYu *wYu
-	UtilsMapToStruct(Env.GET("wYu", []interface{}{}), &wYu)
-
-	if wYu.Srcdb {
-		wYuSrcdb()
+	if Yu.Redis {
+		modules.wYuRedis()
 	}
 
-	if wYu.Redis {
-		wYuRedis()
+	if Yu.I18nT {
+		modules.wYuI18nT()
 	}
 
-	if wYu.I18nT {
-		wYuI18nT()
+	if Yu.Email {
+		modules.wYuEmail()
 	}
 }
 
-func wYuEnv() {
+type modules struct {
+
+}
+
+func New() *modules {
+	return &modules {}
+}
+
+func (module *modules) wYuEnv() *modules {
 	if Env != nil {
-		return
+		return module
 	}
 
 	pflag.String("env", "", "environment configure")
@@ -49,13 +68,19 @@ func wYuEnv() {
 
 	Env = env.LoadInitializedFromYaml()
 	if Env == nil {
-		panic("Error Env In wYuEnv")
+		_, file, line, _ := runtime.Caller(1)
+		panic(fmt.Sprintf("Error Env In wYuEnv » %v » %v", file, line))
 	}
 
-	return
+	return module
 }
 
-func wYuSrcdb() {
+func (module *modules) wYuToken() *modules {
+	YuToken = NewToken()
+	return module
+}
+
+func (module *modules) wYuSrcdb() *modules {
 	var configs *dbConfigs
 
 	envConfigure := Env.GET("DBClusters.Configure", map[string]interface{}{}).(map[string]interface{})
@@ -70,13 +95,15 @@ func wYuSrcdb() {
 	} else {
 		err := UtilsMapToStruct(envConfigure, &configs)
 		if err != nil {
-			panic("Error Env DBClusters.Configure Configures")
+			_, file, line, _ := runtime.Caller(1)
+			panic(fmt.Sprintf("Error Env DBClusters.Configure Configures » %v » %v", file, line))
 		}
 	}
 
 	envDatabases := Env.GET("DBClusters.Databases", map[string]interface{}{}).(map[string]interface{})
 	if len(envDatabases) == 0 {
-		panic("Error Env DBClusters.Databases Configures")
+		_, file, line, _ := runtime.Caller(1)
+		panic(fmt.Sprintf("Error Env DBClusters.Databases Configures » %v » %v", file, line))
 	}
 
 	masterDB = make(map[string][]*db, 0)
@@ -104,24 +131,27 @@ func wYuSrcdb() {
 			}
 
 			switch method {
-				case "master":
-					masterDB[table] = dbEngines
-				case "slaver":
-					slaverDB[table] = dbEngines
-				default:
-					continue
+			case "master":
+				masterDB[table] = dbEngines
+			case "slaver":
+				slaverDB[table] = dbEngines
+			default:
+				continue
 			}
 		}
 	}
+
+	return module
 }
 
-func wYuRedis() {
-	envRedis := Env.GET("Redis", []interface{}{}).([]interface{})
-	if len(envRedis) < 1 {
-		panic("redis configs error in modules/module.go")
+func (module *modules) wYuRedis() *modules {
+	env := Env.GET("Redis", []interface{}{}).([]interface{})
+	if len(env) < 1 {
+		_, file, line, _ := runtime.Caller(1)
+		panic(fmt.Sprintf("redis configs error in modules/module.go » %v » %v", file, line))
 	}
 
-	for _, rd := range envRedis {
+	for _, rd := range env {
 		var src *rdSource
 		toMap := UtilsInterfaceToStringInMap(rd.(map[interface{}]interface{}))
 
@@ -134,10 +164,24 @@ func wYuRedis() {
 
 		RdEngines = append(RdEngines, cache.instance())
 	}
+
+	return module
 }
 
-func wYuI18nT() {
+func (module *modules) wYuI18nT() *modules {
 	if err := NewI18N().Loading(); err != nil {
-		panic(err.Error())
+		_, file, line, _ := runtime.Caller(1)
+		panic(fmt.Sprintf("%v | %v | %v", err.Error(), file, line))
 	}
+
+	return module
+}
+
+func (module *modules) wYuEmail() *modules {
+	var cfg *MailConfigs
+	env := Env.GET("YuMail", map[string]interface{}{}).(map[string]interface{})
+	UtilsMapToStruct(env, &cfg)
+
+	YuEmail = NewMail(cfg)
+	return module
 }
