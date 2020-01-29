@@ -22,28 +22,28 @@ func NewVipers() *vipers {
 	}
 }
 
-func (conf *vipers) Loading() *vipers {
-	conf.Env.SetConfigType(EnvType)
-	conf.Env.AddConfigPath(".")
-	conf.Env.SetConfigName(".env")
+func (cfg *vipers) Loading() *vipers {
+	cfg.Env.SetConfigType(EnvType)
+	cfg.Env.AddConfigPath(".")
+	cfg.Env.SetConfigName(".env")
 
-	if err := conf.Env.ReadInConfig(); err != nil {
+	if err := cfg.Env.ReadInConfig(); err != nil {
 		panic(err.Error())
 	}
 
-	conf.Env.WatchConfig()
-	conf.Env.OnConfigChange(func (e fsnotify.Event){
+	cfg.Env.WatchConfig()
+	cfg.Env.OnConfigChange(func (e fsnotify.Event){
 
 	})
 
-	return conf
+	return cfg
 }
 
-func (conf *vipers) LoadInitializedFromYaml() *vipers {
-	conf.Env.AddConfigPath(EnvPath)
-	conf.Env.SetConfigType(EnvType)
+func (cfg *vipers) LoadInitializedFromYaml() *vipers {
+	cfg.Env.AddConfigPath(EnvPath)
+	cfg.Env.SetConfigType(EnvType)
 
-	var env string = conf.Env.GetString("env")
+	var env string = cfg.Env.GetString("env")
 	if env == "" {
 		panic("--env=? is not configured")
 	}
@@ -52,25 +52,24 @@ func (conf *vipers) LoadInitializedFromYaml() *vipers {
 		panic("--env=? must be in dev,stg,prd")
 	}
 
-	conf.Env.SetConfigName(".env." + env)
+	cfg.Env.SetConfigName(".env." + env)
 
-	if err := conf.Env.ReadInConfig(); err != nil {
+	if err := cfg.Env.ReadInConfig(); err != nil {
 		panic(err.Error())
 	}
 
-	conf.Env.WatchConfig()
-	conf.Env.OnConfigChange(func (e fsnotify.Event){})
+	cfg.Env.WatchConfig()
+	cfg.Env.OnConfigChange(func (e fsnotify.Event){})
 
-	return conf
+	return cfg
 }
 
-func (conf *vipers) GET(key string, val interface{}) (res interface{}) {
-	res = val
-	if conf.Env.IsSet(key) {
-		res = conf.Env.Get(key)
+func (cfg *vipers) GET(key string, val interface{}) interface{} {
+	if cfg.Env.IsSet(key) {
+		return cfg.Env.Get(key)
 	}
 
-	return
+	return val
 }
 
 

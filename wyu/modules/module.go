@@ -83,8 +83,8 @@ func (module *modules) wYuToken() *modules {
 func (module *modules) wYuSrcdb() *modules {
 	var configs *dbConfigs
 
-	envConfigure := Env.GET("DBClusters.Configure", map[string]interface{}{}).(map[string]interface{})
-	if len(envConfigure) == 0 {
+	dbCfg := Env.GET("DBClusters.Configure", map[string]interface{}{}).(map[string]interface{})
+	if len(dbCfg) == 0 {
 		configs = &dbConfigs{
 			DriverName: "mysql",
 			MaxOpen: 1000,
@@ -93,15 +93,15 @@ func (module *modules) wYuSrcdb() *modules {
 			CachedSQL: false,
 		}
 	} else {
-		err := UtilsMapToStruct(envConfigure, &configs)
+		err := UtilsMapToStruct(dbCfg, &configs)
 		if err != nil {
 			_, file, line, _ := runtime.Caller(1)
 			panic(fmt.Sprintf("Error Env DBClusters.Configure Configures » %v » %v", file, line))
 		}
 	}
 
-	envDatabases := Env.GET("DBClusters.Databases", map[string]interface{}{}).(map[string]interface{})
-	if len(envDatabases) == 0 {
+	dbEnv := Env.GET("DBClusters.Databases", map[string]interface{}{}).(map[string]interface{})
+	if len(dbEnv) == 0 {
 		_, file, line, _ := runtime.Caller(1)
 		panic(fmt.Sprintf("Error Env DBClusters.Databases Configures » %v » %v", file, line))
 	}
@@ -109,7 +109,7 @@ func (module *modules) wYuSrcdb() *modules {
 	masterDB = make(map[string][]*db, 0)
 	slaverDB = make(map[string][]*db, 0)
 
-	for table, dbs := range envDatabases {
+	for table, dbs := range dbEnv {
 		for method, databases := range dbs.(map[string]interface{}) {
 			var dbEngines []*db = make([]*db, len(databases.([]interface{})))
 			for key, database := range databases.([]interface{}) {
