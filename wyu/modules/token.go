@@ -33,6 +33,7 @@ import (
 	data, _ := s.srv.Parent.Token.RsaDecrypt(cipher)
 	fmt.Println(string(data))
 **/
+const signature string = "wYu-Xy*Un!"
 
 var (
 	pubKey string = `-----BEGIN RSA PUBLIC KEY-----
@@ -88,12 +89,11 @@ func (token *Token) GenToken(keys ...string) (cipher string, err error) {
 		strKey = strKey + key
 	}
 
-	random, err := UtilsRandUUID(3)
 	if err != nil {
 		return
 	}
 
-	strKey = strKey + random
+	strKey = strKey + signature
 
 	h := sha256.New()
 	h.Write([]byte(strKey))

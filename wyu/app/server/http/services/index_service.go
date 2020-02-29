@@ -30,27 +30,27 @@ func (s *IndexSrv) Token() {
 	//fmt.Println(prvKey)
 	//fmt.Println(pubKey)
 
-	signature, err := s.srv.Parent.Token.RsaSign([]byte("test"))
-	if err != nil {
-		fmt.Println(err.Error())
-		return
-	}
-
-	sign := s.srv.Parent.Token.HexEncodeToString(signature)
-	signByte, _ := s.srv.Parent.Token.HexStringToEncode(sign)
-	fmt.Println(signature)
-	fmt.Println(sign)
-	fmt.Println(signByte)
-	fmt.Println(s.srv.Parent.Token.RsaSignVerify([]byte("test"), signByte))
-	fmt.Println("-----")
-
-	cipher, _ := s.srv.Parent.Token.RsaEncrypt([]byte("test success"))
-	fmt.Println(cipher)
-	cipherTxt := s.srv.Parent.Token.HexEncodeToString(cipher)
-	fmt.Println(cipherTxt)
-	fmt.Println(s.srv.Parent.Token.HexStringToEncode(cipherTxt))
-	data, _ := s.srv.Parent.Token.RsaDecrypt(cipher)
-	fmt.Println(string(data))
+	//signature, err := s.srv.Parent.Token.RsaSign([]byte("test"))
+	//if err != nil {
+	//	fmt.Println(err.Error())
+	//	return
+	//}
+	//
+	//sign := s.srv.Parent.Token.HexEncodeToString(signature)
+	//signByte, _ := s.srv.Parent.Token.HexStringToEncode(sign)
+	//fmt.Println(signature)
+	//fmt.Println(sign)
+	//fmt.Println(signByte)
+	//fmt.Println(s.srv.Parent.Token.RsaSignVerify([]byte("test"), signByte))
+	//fmt.Println("-----")
+	//
+	//cipher, _ := s.srv.Parent.Token.RsaEncrypt([]byte("test success"))
+	//fmt.Println(cipher)
+	//cipherTxt := s.srv.Parent.Token.HexEncodeToString(cipher)
+	//fmt.Println(cipherTxt)
+	//fmt.Println(s.srv.Parent.Token.HexStringToEncode(cipherTxt))
+	//data, _ := s.srv.Parent.Token.RsaDecrypt(cipher)
+	//fmt.Println(string(data))
 	return
 }
 
